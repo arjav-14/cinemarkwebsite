@@ -1,0 +1,3625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CINEMARK GROUP — Luxury. Technology. Cinema.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;1,400;1,500&family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --ink: #0d0a0f;
+      --ink2: #160f1a;
+      --ink3: #1d1420;
+      --gold: #c9a227;
+      --gold-soft: #e6c664;
+      --velvet: #b31e3d;
+      --cream: #f3ead9;
+      --cream-dim: #c9bfae;
+      --magenta: #e0447b;
+      --green: #4caf7d;
+      --line: rgba(243, 234, 217, 0.12);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    ::selection {
+      background: var(--velvet);
+      color: var(--cream);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(201, 162, 39, 0.13) 0%, rgba(201, 162, 39, 0.05) 35%, transparent 70%);
+      transform: translate(-50%, -50%);
+      z-index: 9998;
+      transition: width .3s, height .3s;
+    }
+
+    #cursor-dot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      box-shadow: 0 0 20px 5px rgba(230, 198, 100, 0.8);
+    }
+
+    @media(hover:none) {
+
+      #cursor-glow,
+      #cursor-dot {
+        display: none;
+      }
+
+      body {
+        cursor: auto;
+      }
+    }
+
+    #curtain-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      pointer-events: none;
+    }
+
+    .curtain {
+      width: 50%;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, #7a1128 0px, #8f1730 40px, #6a0f22 80px, #8f1730 120px, #7a1128 160px);
+      box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.6);
+      transition: transform 1.4s cubic-bezier(.76, 0, .24, 1);
+      position: relative;
+    }
+
+    #curtain-wrap.open .curtain.left {
+      transform: translateX(-102%);
+    }
+
+    #curtain-wrap.open .curtain.right {
+      transform: translateX(102%);
+    }
+
+    #curtain-wrap.hide {
+      display: none;
+    }
+
+    .reveal-tag {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.35em;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--gold-soft);
+      z-index: 10001;
+      transition: opacity .6s ease;
+      text-align: center;
+    }
+
+    .reveal-tag img {
+      display: block;
+      max-width: min(70vw, 320px);
+      height: auto;
+      margin: 0 auto 18px;
+      filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.5));
+      animation: logoPop 1s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes logoPop {
+      from {
+        opacity: 0;
+        transform: scale(0.85);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .reveal-tag span {
+      display: block;
+      font-size: 0.5em;
+      color: var(--cream-dim);
+      letter-spacing: 0.3em;
+      margin-top: 0.6em;
+    }
+
+    .reveal-tag.fade {
+      opacity: 0;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 5%;
+      background: linear-gradient(180deg, rgba(13, 10, 15, 0.96), rgba(13, 10, 15, 0.7));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 34px;
+      width: auto;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .logo em {
+      color: var(--gold-soft);
+      font-style: italic;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color .3s;
+      cursor: pointer;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--gold-soft);
+      transition: width .35s;
+    }
+
+    .nav-links a:hover {
+      color: var(--cream);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a.active {
+      color: var(--gold-soft);
+    }
+
+    .nav-more {
+      position: relative;
+      padding-bottom: 24px;
+      margin-bottom: -24px;
+    }
+
+    .nav-more-panel {
+      position: absolute;
+      top: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      min-width: 190px;
+      padding: 10px 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 50;
+    }
+
+    .nav-more:hover .nav-more-panel,
+    .nav-more:focus-within .nav-more-panel,
+    .nav-more.open .nav-more-panel {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .nav-more-panel a {
+      display: block;
+      padding: 9px 18px;
+      font-size: 0.76rem;
+    }
+
+    .nav-more-panel a:hover {
+      background: var(--ink3);
+      color: var(--gold-soft);
+    }
+
+    .nav-cta {
+      border: 1px solid var(--gold);
+      color: var(--gold-soft);
+      padding: 9px 18px;
+      font-size: 0.75rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all .35s;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 600;
+    }
+
+    .burger span {
+      width: 24px;
+      height: 2px;
+      background: var(--cream);
+      transition: transform .3s ease, opacity .3s ease;
+    }
+
+    .burger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .burger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .burger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    @media(max-width:1000px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        background: var(--ink2);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 5%;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links li {
+        width: 100%;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 12px 0;
+      }
+
+      .nav-more {
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      .nav-more-panel {
+        position: static;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+        display: none;
+        border: none;
+        background: transparent;
+        padding: 0 0 0 14px;
+        min-width: 0;
+      }
+
+      .nav-more.open .nav-more-panel {
+        display: block;
+      }
+
+      .burger {
+        display: flex;
+      }
+    }
+
+    .page {
+      display: none;
+      padding-top: 82px;
+    }
+
+    .page.active {
+      display: block;
+      animation: pageIn .5s ease;
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    section,
+    .block {
+      padding: 100px 5%;
+      position: relative;
+    }
+
+    .block-tight {
+      padding: 60px 5%;
+    }
+
+    .section-head {
+      max-width: 680px;
+      margin-bottom: 60px;
+    }
+
+    .eyebrow2 {
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.32em;
+      color: var(--gold-soft);
+      font-size: 0.82rem;
+    }
+
+    .section-head h2,
+    .page-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: clamp(2rem, 4.2vw, 3.2rem);
+      margin-top: 0.5em;
+      line-height: 1.1;
+    }
+
+    .section-head h2 em,
+    .page-title em {
+      font-style: italic;
+      color: var(--gold-soft);
+    }
+
+    .page-sub {
+      color: var(--cream-dim);
+      max-width: 560px;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity .8s cubic-bezier(.2, .8, .2, 1), transform .8s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger>* {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .stagger.in>* {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger.in>*:nth-child(1) {
+      transition-delay: .05s;
+    }
+
+    .stagger.in>*:nth-child(2) {
+      transition-delay: .15s;
+    }
+
+    .stagger.in>*:nth-child(3) {
+      transition-delay: .25s;
+    }
+
+    .stagger.in>*:nth-child(4) {
+      transition-delay: .35s;
+    }
+
+    .stagger.in>*:nth-child(5) {
+      transition-delay: .45s;
+    }
+
+    .stagger.in>*:nth-child(6) {
+      transition-delay: .55s;
+    }
+
+    .stagger.in>*:nth-child(7) {
+      transition-delay: .65s;
+    }
+
+    .stagger.in>*:nth-child(8) {
+      transition-delay: .75s;
+    }
+
+    .stagger.in>*:nth-child(9) {
+      transition-delay: .85s;
+    }
+
+    .stagger.in>*:nth-child(10) {
+      transition-delay: .95s;
+    }
+
+    /* Buttons */
+    .btn-primary,
+    .btn-ghost {
+      padding: 13px 28px;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      text-decoration: none;
+      transition: all .4s cubic-bezier(.2, .8, .2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px -8px rgba(201, 162, 39, .6);
+    }
+
+    .btn-ghost {
+      border: 1px solid var(--line);
+      color: var(--cream);
+      background: transparent;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--gold-soft);
+      color: var(--gold-soft);
+      transform: translateY(-3px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ===== HOME HERO ===== */
+    .hero-scroll-container {
+      position: relative;
+      height: 400vh;
+    }
+
+    .hero {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(1.4);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(180deg, rgba(13, 10, 15, 0.55) 0%, rgba(13, 10, 15, 0.75) 55%, rgba(13, 10, 15, 0.95) 100%);
+    }
+
+    .hero-beams {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      opacity: 0.5;
+      pointer-events: none;
+      background: radial-gradient(ellipse 60% 40% at 20% -10%, rgba(201, 162, 39, .18), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 10%, rgba(224, 68, 123, .12), transparent 60%);
+      animation: beamShift 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes beamShift {
+      0% {
+        transform: translateY(0) scale(1);
+      }
+
+      100% {
+        transform: translateY(30px) scale(1.06);
+      }
+    }
+
+    /* Rotating badge (spinning seal) */
+    .rotate-badge {
+      position: absolute;
+      z-index: 6;
+      right: 6%;
+      bottom: 14%;
+      width: 130px;
+      height: 130px;
+      cursor: pointer;
+    }
+
+    .rotate-badge svg {
+      width: 100%;
+      height: 100%;
+      animation: badgeSpin 14s linear infinite;
+    }
+
+    .rotate-badge:hover svg {
+      animation-play-state: paused;
+    }
+
+    @keyframes badgeSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .rotate-badge .badge-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+      transition: transform .3s;
+    }
+
+    .rotate-badge:hover .badge-center {
+      transform: translate(-50%, -50%) scale(1.12);
+    }
+
+    .rotate-badge text {
+      fill: var(--cream);
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.15em;
+    }
+
+    @media(max-width:900px) {
+      .rotate-badge {
+        width: 96px;
+        height: 96px;
+        right: 5%;
+        bottom: 8%;
+      }
+
+      .rotate-badge .badge-center {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 20px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.4em;
+      color: var(--gold-soft);
+      font-size: 0.92rem;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      line-height: 1.05;
+      font-size: clamp(2.4rem, 6.6vw, 5.2rem);
+      margin: 0.4em 0 0.3em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold-soft);
+    }
+
+    .hero p.sub {
+      font-size: 1.02rem;
+      color: var(--cream-dim);
+      max-width: 520px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+
+    /* Ecosystem grid (shared home preview + full page) */
+    .ecosystem {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .eco-card {
+      background: var(--ink);
+      padding: 40px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background .5s;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .eco-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(224, 68, 123, .18), transparent 60%);
+      transition: opacity .5s;
+    }
+
+    .eco-card:hover::before {
+      opacity: 1;
+    }
+
+    .eco-card:hover {
+      background: var(--ink2);
+    }
+
+    .eco-num {
+      font-family: 'Bebas Neue';
+      font-size: 0.72rem;
+      color: var(--cream-dim);
+      letter-spacing: 0.2em;
+      margin-bottom: auto;
+    }
+
+    .eco-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin: 1.1rem 0 0.4rem;
+      transition: transform .4s;
+    }
+
+    .eco-card:hover h3 {
+      transform: translateX(6px);
+      color: var(--gold-soft);
+    }
+
+    .eco-card p {
+      color: var(--cream-dim);
+      font-size: 0.88rem;
+    }
+
+    /* Real photo strip */
+    .photo-strip-wrap {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    }
+
+    .photo-strip {
+      display: flex;
+      gap: 20px;
+      width: max-content;
+      animation: stripScroll 42s linear infinite;
+    }
+
+    .photo-strip:hover {
+      animation-play-state: paused;
+    }
+
+    .photo-strip .strip-item {
+      position: relative;
+      width: 320px;
+      height: 210px;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .photo-strip .strip-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .6s ease;
+    }
+
+    .photo-strip .strip-item:hover img {
+      transform: scale(1.08);
+    }
+
+    .photo-strip .strip-item .cap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      background: linear-gradient(0deg, rgba(13, 10, 15, 0.9), transparent);
+      color: var(--cream);
+    }
+
+    @keyframes stripScroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Cafeteria block */
+    .cafe-split {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0;
+      border: 1px solid var(--line);
+    }
+
+    .cafe-photo {
+      position: relative;
+      overflow: hidden;
+      min-height: 360px;
+    }
+
+    .cafe-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      animation: kenBurnsSlow 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes kenBurnsSlow {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.1);
+      }
+    }
+
+    .cafe-info {
+      background: var(--ink2);
+      padding: 44px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .cafe-info .eyebrow2 {
+      margin-bottom: 10px;
+    }
+
+    .cafe-info h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+    }
+
+    .cafe-thumb-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .cafe-thumb-row img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      transition: transform .3s;
+    }
+
+    .cafe-thumb-row img:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-soft);
+    }
+
+    .luxury {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .luxury-visual {
+      position: relative;
+      height: 420px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #241621, #150d17);
+    }
+
+    .luxury-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      animation: kenBurnsSlow 18s ease-in-out infinite alternate;
+      opacity: 0.9;
+    }
+
+    .luxury-visual .luxury-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(13, 10, 15, 0.15), rgba(13, 10, 15, 0.65));
+      z-index: 1;
+    }
+
+    .glow-ring {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ringPulse 5s ease-in-out infinite;
+    }
+
+    .glow-ring.r2 {
+      width: 200px;
+      height: 200px;
+      border-color: var(--magenta);
+      animation-delay: 1s;
+    }
+
+    .glow-ring.r3 {
+      width: 130px;
+      height: 130px;
+      border-color: var(--cream);
+      opacity: 0.3;
+      animation-delay: 2s;
+    }
+
+    @keyframes ringPulse {
+
+      0%,
+      100% {
+        opacity: 0.25;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      50% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1.08);
+      }
+    }
+
+    .reel-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue';
+      font-size: 5rem;
+      color: var(--gold);
+      opacity: .15;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.6rem;
+    }
+
+    .tag-row span {
+      border: 1px solid var(--line);
+      padding: 6px 14px;
+      font-size: 0.74rem;
+      color: var(--cream-dim);
+      border-radius: 100px;
+    }
+
+    .stats-block {
+      background: var(--ink2);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      text-align: center;
+      gap: 2rem;
+    }
+
+    .stat-num {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: clamp(2.1rem, 4.6vw, 3.2rem);
+      color: var(--gold-soft);
+    }
+
+    .stat-label {
+      color: var(--cream-dim);
+      font-size: 0.82rem;
+      margin-top: 0.4rem;
+    }
+
+    .movies {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+    }
+
+    .movie-card {
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      transition: transform .5s cubic-bezier(.2, .8, .2, 1), box-shadow .5s;
+      cursor: pointer;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 26px 50px -20px rgba(0, 0, 0, .6);
+    }
+
+    .movie-poster {
+      height: 250px;
+      background: linear-gradient(160deg, #2a1a26, #140b16);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .movie-poster::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(13, 10, 15, .9));
+    }
+
+    .movie-poster span {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 4.6rem;
+      color: rgba(230, 198, 100, .15);
+    }
+
+    .movie-body {
+      padding: 18px 20px;
+    }
+
+    .movie-rating {
+      color: var(--gold-soft);
+      font-size: 0.78rem;
+      margin-bottom: 5px;
+    }
+
+    .movie-body h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.12rem;
+      margin-bottom: 3px;
+    }
+
+    .movie-body p {
+      color: var(--cream-dim);
+      font-size: 0.8rem;
+    }
+
+    .movie-cta {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 0.73rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--gold-soft);
+      padding-bottom: 2px;
+    }
+
+    .cta-band {
+      text-align: center;
+      background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(179, 30, 61, .25), transparent 70%), var(--ink);
+      border-top: 1px solid var(--line);
+    }
+
+    .cta-band h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+      margin-bottom: 1.1rem;
+    }
+
+    .cta-band h2 em {
+      font-style: italic;
+      color: var(--gold-soft);
+    }
+
+    .cta-band p {
+      color: var(--cream-dim);
+      margin-bottom: 1.8rem;
+    }
+
+    /* ===== Generic content blocks reused across pages ===== */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: start;
+    }
+
+    .card-panel {
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      padding: 36px;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row .num {
+      font-family: 'Bebas Neue';
+      color: var(--gold-soft);
+      font-size: 1rem;
+    }
+
+    .info-row h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .info-row p {
+      color: var(--cream-dim);
+      font-size: 0.86rem;
+    }
+
+    /* Forms */
+    form.aurelia-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .aurelia-form label {
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .aurelia-form input,
+    .aurelia-form select,
+    .aurelia-form textarea {
+      width: 100%;
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      color: var(--cream);
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: border-color .3s;
+    }
+
+    .aurelia-form input:focus,
+    .aurelia-form select:focus,
+    .aurelia-form textarea:focus {
+      outline: none;
+      border-color: var(--gold-soft);
+    }
+
+    .aurelia-form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-success {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      background: rgba(76, 175, 125, 0.12);
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 16px 18px;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .form-success.show {
+      display: flex;
+      animation: pageIn .4s ease;
+    }
+
+    @media(max-width:700px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Gallery */
+    .gallery-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .4s;
+      border: 1px solid var(--line);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(224, 68, 123, 0.0), rgba(13, 10, 15, 0.0));
+      opacity: 0;
+      transition: opacity .4s;
+    }
+
+    .gallery-item:hover::after {
+      opacity: 1;
+    }
+
+    .gallery-item .cap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      color: var(--cream);
+      background: linear-gradient(0deg, rgba(13, 10, 15, 0.92), transparent);
+      transform: translateY(100%);
+      transition: transform .35s ease;
+    }
+
+    .gallery-item:hover .cap {
+      transform: translateY(0);
+    }
+
+    .modal-box img.modal-photo {
+      width: 100%;
+      height: auto;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+    }
+
+    /* Modal / lightbox */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 4, 8, 0.86);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+      animation: pageIn .3s ease;
+    }
+
+    .modal-box {
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      max-width: 560px;
+      width: 100%;
+      padding: 38px;
+      position: relative;
+      max-height: 86vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: none;
+      border: none;
+      color: var(--cream-dim);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: var(--gold-soft);
+    }
+
+    .modal-box h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .modal-box p {
+      color: var(--cream-dim);
+      font-size: 0.92rem;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    /* FAQ accordion */
+    .faq-item {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .faq-q {
+      padding: 22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-family: 'Fraunces', serif;
+      font-size: 1.08rem;
+    }
+
+    .faq-q .plus {
+      font-family: 'Bebas Neue';
+      color: var(--gold-soft);
+      font-size: 1.3rem;
+      transition: transform .35s;
+    }
+
+    .faq-item.open .plus {
+      transform: rotate(45deg);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease;
+      color: var(--cream-dim);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding-bottom: 20px;
+    }
+
+    /* Case studies carousel */
+    .carousel {
+      position: relative;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+      scrollbar-width: none;
+    }
+
+    .carousel-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .case-card {
+      min-width: 320px;
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .case-visual {
+      height: 190px;
+      background: linear-gradient(160deg, #2a1a26, #140b16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .case-visual span {
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.15em;
+      color: rgba(230, 198, 100, .3);
+      font-size: 1.1rem;
+    }
+
+    .case-body {
+      padding: 22px 24px;
+    }
+
+    .case-body .tag {
+      font-family: 'Bebas Neue';
+      color: var(--gold-soft);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+    }
+
+    .case-body h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+      margin: 8px 0 6px;
+    }
+
+    .case-body p {
+      color: var(--cream-dim);
+      font-size: 0.86rem;
+    }
+
+    .carousel-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .carousel-nav button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--cream);
+      cursor: pointer;
+      transition: all .3s;
+    }
+
+    .carousel-nav button:hover {
+      border-color: var(--gold-soft);
+      color: var(--gold-soft);
+    }
+
+    /* Career */
+    .job-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px;
+      border: 1px solid var(--line);
+      margin-bottom: 14px;
+      transition: border-color .3s, background .3s;
+      cursor: pointer;
+    }
+
+    .job-card:hover {
+      border-color: var(--gold-soft);
+      background: var(--ink2);
+    }
+
+    .job-card h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+    }
+
+    .job-card p {
+      color: var(--cream-dim);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .job-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      border: 1px solid var(--gold);
+      padding: 5px 12px;
+      white-space: nowrap;
+    }
+
+    /* News */
+    .news-item {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 24px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .news-date {
+      font-family: 'Bebas Neue';
+      color: var(--gold-soft);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+    }
+
+    .news-item h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+
+    .news-item p {
+      color: var(--cream-dim);
+      font-size: 0.88rem;
+    }
+
+    /* Legal tabs */
+    .legal-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .legal-tab {
+      padding: 10px 20px;
+      border: 1px solid var(--line);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .3s;
+    }
+
+    .legal-tab.active {
+      border-color: var(--gold-soft);
+      color: var(--gold-soft);
+      background: var(--ink2);
+    }
+
+    .legal-content {
+      display: none;
+      color: var(--cream-dim);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .legal-content.active {
+      display: block;
+    }
+
+    .legal-content h4 {
+      font-family: 'Fraunces', serif;
+      color: var(--cream);
+      margin: 20px 0 8px;
+      font-size: 1.1rem;
+    }
+
+    /* Booking / seat map */
+    .booking-steps {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    .step-pill {
+      padding: 8px 18px;
+      border: 1px solid var(--line);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-pill.active {
+      border-color: var(--gold-soft);
+      color: var(--gold-soft);
+    }
+
+    .step-pill.done {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .booking-panel {
+      display: none;
+    }
+
+    .booking-panel.active {
+      display: block;
+      animation: pageIn .4s ease;
+    }
+
+    .showtime-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .showtime-btn {
+      border: 1px solid var(--line);
+      background: var(--ink2);
+      color: var(--cream);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .3s;
+    }
+
+    .showtime-btn:hover,
+    .showtime-btn.selected {
+      border-color: var(--gold-soft);
+      color: var(--gold-soft);
+      background: var(--ink3);
+    }
+
+    .showtime-btn .time {
+      font-family: 'Bebas Neue';
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .showtime-btn .fmt {
+      font-size: 0.72rem;
+      color: var(--cream-dim);
+      margin-top: 4px;
+    }
+
+    .screen-curve {
+      width: 70%;
+      max-width: 520px;
+      height: 10px;
+      margin: 0 auto 40px;
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      background: linear-gradient(180deg, var(--gold-soft), transparent);
+      box-shadow: 0 -10px 30px rgba(230, 198, 100, 0.25);
+    }
+
+    .screen-label {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--cream-dim);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .seat-map {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin: 0 auto 30px;
+    }
+
+    .seat-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .seat-row .row-label {
+      width: 20px;
+      font-family: 'Bebas Neue';
+      color: var(--cream-dim);
+      font-size: 0.85rem;
+    }
+
+    .seat {
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--line);
+      background: var(--ink2);
+      cursor: pointer;
+      transition: all .25s;
+      font-size: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream-dim);
+    }
+
+    .seat:hover:not(.sold) {
+      border-color: var(--gold-soft);
+    }
+
+    .seat.selected {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+
+    .seat.sold {
+      background: #2a1a26;
+      color: #5a4a56;
+      cursor: not-allowed;
+      border-color: transparent;
+    }
+
+    .seat-legend {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .seat-legend div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--cream-dim);
+    }
+
+    .legend-box {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--line);
+    }
+
+    .legend-box.selected {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .legend-box.sold {
+      background: #2a1a26;
+    }
+
+    .booking-summary-bar {
+      position: sticky;
+      bottom: 0;
+      background: var(--ink2);
+      border-top: 1px solid var(--line);
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .summary-info {
+      font-size: 0.9rem;
+    }
+
+    .summary-info b {
+      color: var(--gold-soft);
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+    }
+
+    .confirm-box {
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .confirm-icon {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      color: var(--green);
+      font-size: 2rem;
+    }
+
+    .booking-id {
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.15em;
+      color: var(--gold-soft);
+      font-size: 1.3rem;
+      margin: 14px 0;
+    }
+
+    footer {
+      padding: 60px 5% 30px;
+      border-top: 1px solid var(--line);
+      background: var(--ink2);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-grid h5 {
+      font-family: 'Bebas Neue';
+      letter-spacing: 0.15em;
+      color: var(--gold-soft);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-grid ul {
+      list-style: none;
+    }
+
+    .footer-grid ul li {
+      margin-bottom: 0.6rem;
+    }
+
+    .footer-grid ul a,
+    .footer-grid ul span {
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-size: 0.86rem;
+      transition: color .3s;
+      cursor: pointer;
+    }
+
+    .footer-grid ul a:hover,
+    .footer-grid ul span:hover {
+      color: var(--gold-soft);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+      color: var(--cream-dim);
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-bottom span {
+      cursor: pointer;
+    }
+
+    .footer-bottom span:hover {
+      color: var(--gold-soft);
+    }
+
+    @media(max-width:900px) {
+
+      .luxury,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cursor-glow"></div>
+  <div id="cursor-dot"></div>
+
+  <div id="curtain-wrap">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+    <div class="reveal-tag" id="revealTag"><img
+        src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714656/cinemark_assets/u84ncozegxwilikzq05r.png"
+        alt="Cinemark Movies logo">CINEMARK MOVIES<span>presents</span></div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo" onclick="go('home')"><img
+        src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714656/cinemark_assets/u84ncozegxwilikzq05r.png"
+        alt="Cinemark Movies logo">CINEMARK<span
+        style="color:var(--cream-dim); font-weight:400; font-size:0.7em; margin-left:2px;">MOVIES</span></div>
+    <ul class="nav-links" id="navLinks">
+      <li><a onclick="go('home')" data-page="home">Home</a></li>
+      <li><a onclick="go('ecosystem')" data-page="ecosystem">Ecosystem</a></li>
+      <li><a onclick="go('franchise')" data-page="franchise">Franchise</a></li>
+      <li><a onclick="go('about')" data-page="about">About</a></li>
+      <li class="nav-more" id="navMore">
+        <a onclick="toggleMore(event)">More ▾</a>
+        <div class="nav-more-panel">
+          <a onclick="go('advertise')">Advertise With Us</a>
+          <a onclick="go('bookevent')">Book an Event</a>
+          <a onclick="go('casestudies')">Success Stories</a>
+          <a onclick="go('gallery')">Gallery</a>
+          <a onclick="go('career')">Career</a>
+          <a onclick="go('news')">News</a>
+          <a onclick="go('faq')">FAQ</a>
+          <a onclick="go('investors')">Investors</a>
+          <a onclick="go('legal')">Legal</a>
+        </div>
+      </li>
+      <li><a onclick="go('contact')" data-page="contact">Contact</a></li>
+      <li class="nav-more" id="navApp">
+        <a onclick="toggleApp(event)">Cinemark App ▾</a>
+        <div class="nav-more-panel">
+          <a onclick="go('bookevent')">Book an Event</a>
+          <a onclick="go('membership')">Cinemark Membership</a>
+        </div>
+      </li>
+    </ul>
+    <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+  </nav>
+
+  <!-- ============ HOME PAGE ============ -->
+  <div class="page active" id="page-home">
+    <div class="hero-scroll-container" id="heroScrollContainer">
+      <section class="hero">
+
+        <canvas id="heroCanvas" class="hero-canvas"></canvas>
+        <div class="hero-overlay"></div>
+        <div class="hero-beams"></div>
+
+        <div class="hero-content">
+          <div class="eyebrow reveal in">LUXURY · TECHNOLOGY · CINEMA</div>
+          <h1 class="reveal in">Unbox your own <em>cinemark.</em></h1>
+          <p class="sub reveal in">India's fastest-growing premium next-gen cinema network — 125+ signature screens,
+            chef-curated lounges, and franchise-ready formats.</p>
+          <div class="hero-ctas reveal in">
+            <a class="btn-primary" onclick="go('franchise')">Franchise With Us →</a>
+
+          </div>
+        </div>
+      </section>
+    </div>
+
+
+    <section>
+      <div class="section-head reveal">
+        <div class="eyebrow2">THE CINEMARK SUITE</div>
+        <h2>One ecosystem. <em>Infinite experiences.</em></h2>
+      </div>
+      <div class="ecosystem stagger" id="ecoPreview"></div>
+      <div style="text-align:center; margin-top:40px;">
+        <a class="btn-ghost" onclick="go('ecosystem')">Explore Full Ecosystem →</a>
+      </div>
+    </section>
+
+    <section class="block-tight" style="padding-top:0;">
+      <div class="section-head reveal">
+        <div class="eyebrow2">INSIDE CINEMARK</div>
+        <h2>A look <em>inside our screens.</em></h2>
+      </div>
+      <div class="photo-strip-wrap reveal">
+        <div class="photo-strip" id="photoStrip"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="luxury">
+        <div class="luxury-visual reveal">
+          <img
+            src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714657/cinemark_assets/b9vy7qfsyrxrypd9odci.jpg"
+            alt="Cinemark luxury lounge">
+          <div class="luxury-scrim"></div>
+        </div>
+        <div class="reveal">
+          <div class="eyebrow2">THE LUXURY LAYER</div>
+          <h2
+            style="font-family:'Fraunces',serif; font-weight:500; font-size:clamp(1.9rem,3.4vw,2.6rem); margin:0.5em 0 1rem;">
+            Cinema, <em style="color:var(--gold-soft); font-style:italic;">reimagined</em> as an event.</h2>
+          <p style="color:var(--cream-dim); margin-bottom:1.6rem; max-width:460px;">Plush recliners, a curated food and
+            beverage menu, and white-glove service. Every detail is considered — this isn't a screening, it's an
+            occasion.</p>
+          <div class="tag-row"><span>Recliners</span><span>Gourmet F&B</span><span>VIP Service</span><span>Private
+              Premieres</span></div>
+          <a class="btn-primary" onclick="go('bookevent')">Reserve an Experience →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block-tight">
+      <div class="cafe-split reveal">
+        <div class="cafe-photo"><img
+            src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714658/cinemark_assets/rgbyhny0qg4gumh7chx7.jpg"
+            alt="Cinemark Cafeteria"></div>
+        <div class="cafe-info">
+          <div class="eyebrow2">THE CAFETERIA</div>
+          <h3>Snacks worth the <em style="color:var(--gold-soft); font-style:italic;">intermission.</em></h3>
+          <p style="color:var(--cream-dim); font-size:0.92rem;">Fresh popcorn, hot dogs, and cold beverages — served
+            fast so you're back in your seat before the lights dim.</p>
+          <div class="cafe-thumb-row">
+            <img
+              src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714659/cinemark_assets/dxmuqcok1rvswyq5duui.jpg"
+              alt="popcorn">
+            <img
+              src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714660/cinemark_assets/wrstiweg5dk5aqgtucd9.jpg"
+              alt="pizza corner">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-block">
+      <div class="stats-grid reveal">
+        <div>
+          <div class="stat-num" data-target="9">0</div>
+          <div class="stat-label">Million+ Annual Footfall</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="125">0</div>
+          <div class="stat-label">Premium Screens</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="42">0</div>
+          <div class="stat-label">Cities Covered</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="97">0</div>
+          <div class="stat-label">% Guest Satisfaction</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head reveal">
+        <div class="eyebrow2">NOW SCREENING</div>
+        <h2>Latest releases, <em>front row.</em></h2>
+      </div>
+      <div class="movies stagger" id="movieGrid"></div>
+      <div style="text-align:center; margin-top:36px;"><a class="btn-ghost" onclick="go('booking')">View All Movies
+          →</a></div>
+    </section>
+
+    <section class="cta-band">
+      <h2 class="reveal">Let's build <em>high-impact</em><br>brand experiences.</h2>
+      <p class="reveal">Tell us your vision. We'll handle the rest.</p>
+      <a class="btn-primary reveal" onclick="go('contact')">Get in Touch →</a>
+    </section>
+  </div>
+
+  <!-- ============ ECOSYSTEM PAGE ============ -->
+  <div class="page" id="page-ecosystem">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">THE CINEMARK SUITE</div>
+        <h2 class="page-title">A platform built for <em>every screen.</em></h2>
+        <p class="page-sub">Ten connected products across entertainment, events, and media — click any tile for details.
+        </p>
+      </div>
+      <div class="ecosystem stagger in" id="ecoFull"></div>
+    </section>
+  </div>
+
+  <!-- ============ ABOUT PAGE ============ -->
+  <div class="page" id="page-about">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">ABOUT US</div>
+        <h2 class="page-title">Built to make cinema an <em>occasion again.</em></h2>
+        <p class="page-sub">Founded to bring next-generation, tech-forward cinema formats to metros and tier 1–3 cities
+          alike.</p>
+      </div>
+      <div class="two-col">
+        <div class="card-panel reveal in">
+          <div class="info-row">
+            <div class="num">01</div>
+            <div>
+              <h4>Our Origin</h4>
+              <p>Started with a single signature screen — now a pan-India network spanning dozens of cities.</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">02</div>
+            <div>
+              <h4>Our Mission</h4>
+              <p>Make premium, technology-led cinema accessible beyond metro cities, without compromising on experience.
+              </p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">03</div>
+            <div>
+              <h4>Our Approach</h4>
+              <p>Every location blends signature screens, F&B, and event-ready spaces into one flexible format.</p>
+            </div>
+          </div>
+        </div>
+        <div class="luxury-visual reveal in" style="height:100%; min-height:300px;">
+          <div class="glow-ring"></div>
+          <div class="glow-ring r2"></div>
+          <div class="reel-icon">A</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ ADVERTISE PAGE ============ -->
+  <div class="page" id="page-advertise">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">ADVERTISE WITH US</div>
+        <h2 class="page-title">Reach audiences <em>in the moment.</em></h2>
+        <p class="page-sub">On-screen ads, lobby activations, and branded experiences across our premium screen network.
+        </p>
+      </div>
+      <div class="ecosystem stagger in">
+        <div class="eco-card">
+          <div class="eco-num">01</div>
+          <h3>Screen Advertising</h3>
+          <p>Pre-show slots across signature and smart cinema formats.</p>
+        </div>
+        <div class="eco-card">
+          <div class="eco-num">02</div>
+          <h3>Lobby Activations</h3>
+          <p>Branded standees, sampling zones, and interactive booths.</p>
+        </div>
+        <div class="eco-card">
+          <div class="eco-num">03</div>
+          <h3>Co-branded Premieres</h3>
+          <p>Host your brand launch alongside a film premiere night.</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:40px;"><a class="btn-primary" onclick="go('contact')">Talk to Our Team
+          →</a></div>
+    </section>
+  </div>
+
+  <!-- ============ FRANCHISE PAGE ============ -->
+  <div class="page" id="page-franchise">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">FRANCHISE WITH US</div>
+        <h2 class="page-title">Own a cinema, <em>built for you.</em></h2>
+        <p class="page-sub">Turnkey format, technology, and brand support — franchise in as little as 20 minutes of
+          paperwork.</p>
+      </div>
+      <div class="two-col">
+        <div class="card-panel reveal in">
+          <form class="aurelia-form" onsubmit="submitForm(event,'franchiseSuccess')">
+            <div class="form-row">
+              <div><label>Full Name</label><input type="text" required placeholder="Jordan Lee"></div>
+              <div><label>Phone</label><input type="tel" required placeholder="+65 0000 0000"></div>
+            </div>
+            <div class="form-row">
+              <div><label>Email</label><input type="email" required placeholder="you@email.com"></div>
+              <div><label>City</label><input type="text" required placeholder="Preferred city"></div>
+            </div>
+            <div><label>Investment Budget</label>
+              <select required>
+                <option value="">Select range</option>
+                <option>₹50L – ₹1 Cr</option>
+                <option>₹1 Cr – ₹3 Cr</option>
+                <option>₹3 Cr+</option>
+              </select>
+            </div>
+            <div><label>Tell us about the location</label><textarea
+                placeholder="Property size, footfall, city tier..."></textarea></div>
+            <button class="btn-primary" type="submit">Submit Franchise Enquiry →</button>
+            <div class="form-success" id="franchiseSuccess">✓ Enquiry received — our franchise team will reach out
+              within 48 hours.</div>
+          </form>
+        </div>
+        <div class="card-panel reveal in">
+          <div class="info-row">
+            <div class="num">01</div>
+            <div>
+              <h4>Turnkey Setup</h4>
+              <p>Design, screens, and systems delivered end-to-end.</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">02</div>
+            <div>
+              <h4>Brand & Marketing</h4>
+              <p>Launch support and ongoing campaign toolkits.</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">03</div>
+            <div>
+              <h4>Revenue Streams</h4>
+              <p>Ticketing, F&B, advertising, and private events.</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">04</div>
+            <div>
+              <h4>Fast-Track Approval</h4>
+              <p>Franchise agreements processed in as little as 20 minutes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ BOOK EVENT PAGE ============ -->
+  <div class="page" id="page-bookevent">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">BOOK AN EVENT</div>
+        <h2 class="page-title">Host something <em>unforgettable.</em></h2>
+        <p class="page-sub">Private premieres, corporate screenings, birthdays, and brand launches — in a real cinema.
+        </p>
+      </div>
+      <div class="card-panel reveal in" style="max-width:640px;">
+        <form class="aurelia-form" onsubmit="submitForm(event,'eventSuccess')">
+          <div class="form-row">
+            <div><label>Event Type</label>
+              <select required>
+                <option value="">Select</option>
+                <option>Private Premiere</option>
+                <option>Corporate Screening</option>
+                <option>Birthday / Celebration</option>
+                <option>Brand Launch</option>
+              </select>
+            </div>
+            <div><label>Guest Count</label><input type="number" min="1" required placeholder="e.g. 40"></div>
+          </div>
+          <div class="form-row">
+            <div><label>Preferred Date</label><input type="date" required></div>
+            <div><label>City / Venue</label><input type="text" required placeholder="Nearest Cinemark location"></div>
+          </div>
+          <div><label>Additional Requests</label><textarea placeholder="Catering, decor, screen format..."></textarea>
+          </div>
+          <button class="btn-primary" type="submit">Request Booking →</button>
+          <div class="form-success" id="eventSuccess">✓ Request sent — our events concierge will confirm availability
+            shortly.</div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ SUCCESS STORIES PAGE ============ -->
+  <div class="page" id="page-casestudies">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">SUCCESS STORIES</div>
+        <h2 class="page-title">Work that <em>moved audiences.</em></h2>
+      </div>
+      <div class="carousel reveal in">
+        <div class="carousel-track" id="caseTrack"></div>
+        <div class="carousel-nav">
+          <button onclick="scrollCarousel(-1)">←</button>
+          <button onclick="scrollCarousel(1)">→</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ GALLERY PAGE ============ -->
+  <div class="page" id="page-gallery">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">GALLERY</div>
+        <h2 class="page-title">Inside the <em>experience.</em></h2>
+      </div>
+      <div class="gallery-filters reveal in" id="galleryFilters">
+        <button class="filter-btn active" onclick="filterGallery('All')">All</button>
+        <button class="filter-btn" onclick="filterGallery('Exterior')">Exterior</button>
+        <button class="filter-btn" onclick="filterGallery('Lobby')">Lobby</button>
+        <button class="filter-btn" onclick="filterGallery('Auditorium')">Auditorium</button>
+        <button class="filter-btn" onclick="filterGallery('Food & Beverage')">Food & Beverage</button>
+        <button class="filter-btn" onclick="filterGallery('VIP Lounge')">VIP Lounge</button>
+      </div>
+      <div class="gallery-grid reveal in" id="galleryGrid"></div>
+    </section>
+  </div>
+
+  <!-- ============ CONTACT PAGE ============ -->
+  <div class="page" id="page-contact">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">CONTACT</div>
+        <h2 class="page-title">Let's start a <em>conversation.</em></h2>
+      </div>
+      <div class="two-col">
+        <div class="card-panel reveal in">
+          <form class="aurelia-form" onsubmit="submitForm(event,'contactSuccess')">
+            <div class="form-row">
+              <div><label>Name</label><input type="text" required></div>
+              <div><label>Email</label><input type="email" required></div>
+            </div>
+            <div><label>Subject</label>
+              <select required>
+                <option value="">Select</option>
+                <option>General Enquiry</option>
+                <option>Feedback</option>
+                <option>Partnership</option>
+                <option>Press</option>
+              </select>
+            </div>
+            <div><label>Message</label><textarea required placeholder="How can we help?"></textarea></div>
+            <button class="btn-primary" type="submit">Send Message →</button>
+            <div class="form-success" id="contactSuccess">✓ Message sent — we'll respond within 1 business day.</div>
+          </form>
+        </div>
+        <div class="card-panel reveal in">
+          <div class="info-row">
+            <div class="num">✆</div>
+            <div>
+              <h4>Phone</h4>
+              <p>+91 1800 000 0000</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">✉</div>
+            <div>
+              <h4>Email</h4>
+              <p>hello@aureliacinemas.example</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">⌂</div>
+            <div>
+              <h4>Head Office</h4>
+              <p>Cinemark Tower, Business District, India</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="num">→</div>
+            <div>
+              <h4>Feedback</h4>
+              <p>Had a recent visit? <a style="color:var(--gold-soft); cursor:pointer;"
+                  onclick="submitForm(event,'contactSuccess')">Share quick feedback</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ FAQ PAGE ============ -->
+  <div class="page" id="page-faq">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">FAQ</div>
+        <h2 class="page-title">Questions, <em>answered.</em></h2>
+      </div>
+      <div id="faqList" style="max-width:760px;"></div>
+    </section>
+  </div>
+
+  <!-- ============ CAREER PAGE ============ -->
+  <div class="page" id="page-career">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">CAREERS</div>
+        <h2 class="page-title">Build the future of <em>cinema with us.</em></h2>
+      </div>
+      <div id="jobList" style="max-width:800px;"></div>
+    </section>
+  </div>
+
+  <!-- ============ NEWS PAGE ============ -->
+  <div class="page" id="page-news">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">NEWS & PROMOTIONS</div>
+        <h2 class="page-title">What's <em>new.</em></h2>
+      </div>
+      <div style="max-width:760px;">
+        <div class="news-item">
+          <div class="news-date">JUL 2026</div>
+          <div>
+            <h4>Cinemark opens 125th screen</h4>
+            <p>Our latest signature screen launches in a new tier-2 city, marking a milestone footprint expansion.</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">JUN 2026</div>
+          <div>
+            <h4>Cinemark Sky rooftop season begins</h4>
+            <p>Open-air rooftop screenings return for the summer across flagship locations.</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">MAY 2026</div>
+          <div>
+            <h4>Partnership with regional studios announced</h4>
+            <p>New content partnerships bring more regional-language premieres to Cinemark screens.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ INVESTORS PAGE ============ -->
+  <div class="page" id="page-investors">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">INVESTOR SECTION</div>
+        <h2 class="page-title">Growth, <em>backed by numbers.</em></h2>
+      </div>
+      <div class="stats-grid reveal in" style="margin-bottom:50px;">
+        <div>
+          <div class="stat-num" data-target="125">0</div>
+          <div class="stat-label">Screens Operational</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="42">0</div>
+          <div class="stat-label">Cities</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="9">0</div>
+          <div class="stat-label">Million Footfall</div>
+        </div>
+        <div>
+          <div class="stat-num" data-target="31">0</div>
+          <div class="stat-label">% YoY Growth</div>
+        </div>
+      </div>
+      <div class="card-panel reveal in" style="max-width:640px;">
+        <p style="color:var(--cream-dim); font-size:0.92rem; margin-bottom:16px;">For investor relations enquiries,
+          annual reports, or partnership discussions, reach out directly.</p>
+        <a class="btn-primary" onclick="go('contact')">Contact Investor Relations →</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ LEGAL PAGE ============ -->
+  <div class="page" id="page-legal">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">LEGAL</div>
+        <h2 class="page-title">Policies & <em>terms.</em></h2>
+      </div>
+      <div class="legal-tabs reveal in">
+        <div class="legal-tab active" onclick="showLegal('privacy',this)">Privacy Policy</div>
+        <div class="legal-tab" onclick="showLegal('terms',this)">Terms & Conditions</div>
+        <div class="legal-tab" onclick="showLegal('refund',this)">Refund Policy</div>
+        <div class="legal-tab" onclick="showLegal('notice',this)">Legal Notice</div>
+      </div>
+      <div class="legal-content active" id="legal-privacy">
+        <h4>Data We Collect</h4>
+        <p>Basic contact and booking details submitted through our forms and ticketing flow.</p>
+        <h4>How We Use It</h4>
+        <p>To process bookings, respond to enquiries, and improve our locations and services.</p>
+      </div>
+      <div class="legal-content" id="legal-terms">
+        <h4>Use of Services</h4>
+        <p>Tickets, franchise, and event bookings are subject to availability and location-specific terms.</p>
+      </div>
+      <div class="legal-content" id="legal-refund">
+        <h4>Cancellations</h4>
+        <p>Ticket cancellations are accepted up to a defined window before showtime, subject to convenience fees.</p>
+      </div>
+      <div class="legal-content" id="legal-notice">
+        <h4>Legal Notice</h4>
+        <p>All content, branding, and formats referenced here are illustrative and part of a demo experience.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ BOOKING / TICKETING PAGE ============ -->
+  <div class="page" id="page-booking">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">BOOK TICKETS</div>
+        <h2 class="page-title">Pick a film, <em>pick your seat.</em></h2>
+      </div>
+
+      <div class="booking-steps">
+        <div class="step-pill active" id="step-pill-1">1 · Movie</div>
+        <div class="step-pill" id="step-pill-2">2 · Showtime</div>
+        <div class="step-pill" id="step-pill-3">3 · Seats</div>
+        <div class="step-pill" id="step-pill-4">4 · Confirm</div>
+      </div>
+
+      <!-- Step 1: movie select -->
+      <div class="booking-panel active" id="booking-step-1">
+        <div class="movies stagger in" id="bookingMovieGrid"></div>
+      </div>
+
+      <!-- Step 2: showtime -->
+      <div class="booking-panel" id="booking-step-2">
+        <p class="page-sub" id="showtimeMovieLabel" style="margin-bottom:0;"></p>
+        <div class="showtime-grid" id="showtimeGrid"></div>
+        <div style="margin-top:30px;"><a class="btn-ghost" onclick="bookingGoStep(1)">← Back</a></div>
+      </div>
+
+      <!-- Step 3: seats -->
+      <div class="booking-panel" id="booking-step-3">
+        <div class="screen-label">Screen this way</div>
+        <div class="screen-curve"></div>
+        <div class="seat-legend">
+          <div>
+            <div class="legend-box"></div>Available
+          </div>
+          <div>
+            <div class="legend-box selected"></div>Selected
+          </div>
+          <div>
+            <div class="legend-box sold"></div>Sold
+          </div>
+        </div>
+        <div class="seat-map" id="seatMap"></div>
+        <div style="text-align:center; margin-top:10px;"><a class="btn-ghost" onclick="bookingGoStep(2)">← Back</a>
+        </div>
+      </div>
+
+      <!-- Step 4: confirm -->
+      <div class="booking-panel" id="booking-step-4">
+        <div class="confirm-box">
+          <div class="confirm-icon">✓</div>
+          <h2 style="font-family:'Fraunces',serif; font-size:1.8rem;">Booking Confirmed</h2>
+          <p style="color:var(--cream-dim); margin-top:10px;" id="confirmSummary"></p>
+          <div class="booking-id" id="confirmId"></div>
+          <a class="btn-primary" onclick="resetBooking()">Book Another →</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="booking-summary-bar" id="summaryBar" style="display:none;">
+      <div class="summary-info"><b id="seatCount">0</b> seats selected · Total <b id="seatTotal">₹0</b></div>
+      <button class="btn-primary" id="proceedBtn" onclick="proceedToConfirm()" disabled>Proceed to Pay →</button>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:12px;"><img
+            src="https://res.cloudinary.com/mibjryxu/image/upload/v1784714656/cinemark_assets/u84ncozegxwilikzq05r.png"
+            alt="Cinemark Movies logo">CINEMARK<span
+            style="color:var(--cream-dim); font-weight:400; font-size:0.7em; margin-left:2px;">MOVIES</span></div>
+        <p style="color:var(--cream-dim); font-size:0.88rem; max-width:280px;">A premium cinema network for advertising,
+          experiential marketing, and brand events across India.</p>
+      </div>
+      <div>
+        <h5>COMPANY</h5>
+        <ul>
+          <li><span onclick="go('about')">About</span></li>
+          <li><span onclick="go('career')">Career</span></li>
+          <li><span onclick="go('investors')">Investors</span></li>
+        </ul>
+      </div>
+      <div>
+        <h5>PARTNER</h5>
+        <ul>
+          <li><span onclick="go('franchise')">Franchise</span></li>
+          <li><span onclick="go('advertise')">Advertise</span></li>
+          <li><span onclick="go('bookevent')">Book an Event</span></li>
+        </ul>
+      </div>
+      <div>
+        <h5>SUPPORT</h5>
+        <ul>
+          <li><span onclick="go('faq')">FAQ</span></li>
+          <li><span onclick="go('contact')">Contact</span></li>
+          <li><span onclick="go('gallery')">Gallery</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Cinemark Group. All rights reserved.</span>
+      <span onclick="go('legal')">Privacy Policy · Terms of Service · Refund Policy</span>
+    </div>
+  </footer>
+
+  <!-- ============ ADMIN PAGE ============ -->
+  <div class="page" id="page-admin">
+    <section class="block-tight">
+      <div class="section-head reveal in">
+        <div class="eyebrow2">ADMINISTRATION</div>
+        <h2 class="page-title">Manage <em>Content.</em></h2>
+      </div>
+      
+      <!-- Login Section -->
+      <div id="admin-login-section" style="max-width: 400px; margin: 0 auto; padding: 40px; background: var(--ink2); border: 1px solid var(--line);">
+        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 20px;">Admin Login</h3>
+        <form class="aurelia-form" id="adminLoginForm">
+          <div><label>Email</label><input type="email" id="adminEmail" required></div>
+          <div style="margin-top: 15px;"><label>Password</label><input type="password" id="adminPassword" required></div>
+          <button class="btn-primary" type="submit" style="margin-top: 25px; width: 100%; justify-content: center;">Login →</button>
+          <div class="form-success" id="loginError" style="border-color: var(--velvet); color: var(--velvet); background: rgba(179,30,61,0.12); display:none; margin-top:15px;"></div>
+        </form>
+      </div>
+
+      <!-- Dashboard Section -->
+      <div id="admin-dashboard-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+          <h3 style="font-family: 'Fraunces', serif;">Content Management System</h3>
+          <button class="btn-ghost" id="adminLogoutBtn" onclick="logout()" style="padding: 10px 20px;">Logout</button>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 15px;">
+          <button class="btn-ghost active" onclick="switchAdminTab('gallery')" id="tab-gallery">Gallery</button>
+          <button class="btn-ghost" onclick="switchAdminTab('nav')" id="tab-nav">Navigation</button>
+          <button class="btn-ghost" onclick="switchAdminTab('content')" id="tab-content">Site Content</button>
+        </div>
+
+        <!-- Gallery CMS -->
+        <div id="cms-gallery" class="cms-panel" style="display: block;">
+          <div style="background: var(--ink2); border: 1px solid var(--line); padding: 30px; margin-bottom: 40px;">
+            <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Upload New Photo</h4>
+            <form class="aurelia-form" id="uploadPhotoForm">
+              <div class="form-row">
+                <div>
+                  <label>Image File</label>
+                  <input type="file" id="photoFile" accept="image/*" required style="padding: 9px; cursor: pointer;">
+                </div>
+                <div>
+                  <label>Caption</label>
+                  <input type="text" id="photoCaption" required placeholder="A brief description...">
+                </div>
+              </div>
+              <div style="margin-top: 15px;">
+                <label>Section</label>
+                <select id="photoSection" required style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); border-radius: 4px;">
+                  <option value="Exterior">Exterior</option>
+                  <option value="Lobby">Lobby</option>
+                  <option value="Auditorium">Auditorium</option>
+                  <option value="Food & Beverage">Food & Beverage</option>
+                  <option value="VIP Lounge">VIP Lounge</option>
+                </select>
+              </div>
+              <button class="btn-primary" type="submit" id="uploadBtn" style="margin-top: 20px;">Upload to Gallery →</button>
+              <div class="form-success" id="uploadStatus" style="display:none; margin-top: 15px;"></div>
+            </form>
+          </div>
+          <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Current Gallery Photos</h4>
+          <div class="gallery-grid" id="adminGalleryList"></div>
+        </div>
+
+        <!-- Navigation CMS -->
+        <div id="cms-nav" class="cms-panel" style="display: none;">
+          <div style="background: var(--ink2); border: 1px solid var(--line); padding: 30px; margin-bottom: 40px;">
+            <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Add Nav Link</h4>
+            <form class="aurelia-form" id="addNavForm">
+              <div class="form-row">
+                <div><label>Link Title</label><input type="text" id="navTitle" required placeholder="e.g. Home"></div>
+                <div><label>Target Page ID</label><input type="text" id="navTarget" required placeholder="e.g. home"></div>
+              </div>
+              <div class="form-row" style="margin-top:15px;">
+                <div><label>Order</label><input type="number" id="navOrder" required value="1"></div>
+                <div><label>Location</label>
+                  <select id="navLocation" style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); border-radius: 4px;">
+                    <option value="main">Main Bar</option>
+                    <option value="more">"More" Dropdown</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn-primary" type="submit" id="addNavBtn" style="margin-top: 20px;">Add Link →</button>
+              <div class="form-success" id="navStatus" style="display:none; margin-top: 15px;"></div>
+            </form>
+          </div>
+          <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Current Links</h4>
+          <div id="adminNavList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+
+        <!-- Content CMS -->
+        <div id="cms-content" class="cms-panel" style="display: none;">
+          <div style="background: var(--ink2); border: 1px solid var(--line); padding: 30px; margin-bottom: 40px;">
+             <form class="aurelia-form" id="editContentForm">
+                <div style="margin-bottom:15px;">
+                  <label>Hero Title (HTML allowed)</label>
+                  <textarea id="contentHeroTitle" rows="3" style="width:100%; padding:10px; background:rgba(255,255,255,0.05); color:white; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;"></textarea>
+                </div>
+                <div style="margin-bottom:15px;">
+                  <label>About Us Paragraph</label>
+                  <textarea id="contentAbout" rows="5" style="width:100%; padding:10px; background:rgba(255,255,255,0.05); color:white; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;"></textarea>
+                </div>
+                <button class="btn-primary" type="submit" id="saveContentBtn" style="margin-top: 20px;">Save Content →</button>
+                <div class="form-success" id="contentStatus" style="display:none; margin-top: 15px;"></div>
+             </form>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </div>
+
+  <!-- ============ MODAL (shared) ============ -->
+  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------------- DATA ---------------- */
+    const ecoData = [
+      { n: '01', name: 'Conn Events', desc: 'Turnkey experiential and corporate event spaces inside our cinemas.' },
+      { n: '02', name: 'Conn Music', desc: 'Live acoustic sessions and album-launch screenings.' },
+      { n: '03', name: 'Connflix', desc: 'A streaming platform for cinema-grade original content.' },
+      { n: '04', name: 'Connplex Studio', desc: 'In-house production stages for brand and film content.' },
+      { n: '05', name: 'ConnTube', desc: 'Creator channels broadcast on the big screen before showtime.' },
+      { n: '06', name: 'Downtown', desc: 'A lifestyle retail and F&B zone built into flagship locations.' },
+      { n: '07', name: 'Gameflix', desc: 'Interactive gaming lounges for pre- and post-movie play.' },
+      { n: '08', name: 'ConnAir', desc: 'Airport-format micro-cinemas for travelers.' },
+      { n: '09', name: 'Sky-Inn', desc: 'Rooftop open-air screenings under the stars.' },
+      { n: '10', name: 'Spectra X', desc: 'Immersive multi-sensory screen format with 4D elements.' }
+    ];
+    const moviesData = [
+      { id: 1, title: 'Midnight Ledger', genre: 'Thriller · Drama', rating: '4.8', letter: 'M' },
+      { id: 2, title: 'Solstice Run', genre: 'Action · Adventure', rating: '4.9', letter: 'S' },
+      { id: 3, title: 'Paper Constellations', genre: 'Romance · Comedy', rating: '4.7', letter: 'P' },
+      { id: 4, title: 'The Glass Orchestra', genre: 'Drama · Music', rating: '4.6', letter: 'G' },
+      { id: 5, title: 'Ember & Ash', genre: 'Action · Drama', rating: '4.8', letter: 'E' },
+      { id: 6, title: 'Last Train to Novara', genre: 'Mystery · Thriller', rating: '4.7', letter: 'L' }
+    ];
+    const caseData = [
+      { tag: 'EXPERIENTIAL', title: 'Brand Activations', desc: 'Bringing brands to life in premium cinema lobbies.' },
+      { tag: 'ADVERTISING', title: 'On-Screen Campaigns', desc: 'Pre-show ad placements driving measurable recall.' },
+      { tag: 'EVENTS', title: 'Private Premieres', desc: 'Studio partners hosting exclusive first-look screenings.' },
+      { tag: 'RETAIL', title: 'Downtown Pop-ups', desc: 'Retail activations layered into the cinema lobby experience.' }
+    ];
+    const faqData = [
+      { q: 'How do I book tickets online?', a: 'Select a movie under Now Showing, choose a showtime, pick your seats, and confirm — all within this site.' },
+      { q: 'Can I cancel or reschedule a booking?', a: 'Yes, cancellations are accepted up to a defined window before showtime. See our Refund Policy for details.' },
+      { q: 'How do I enquire about a franchise?', a: 'Visit the Franchise page and submit the enquiry form — our team responds within 48 hours.' },
+      { q: 'Do you host private events?', a: 'Yes — see Book an Event for premieres, corporate screenings, and celebrations.' }
+    ];
+    const jobsData = [
+      { title: 'Cinema Operations Manager', loc: 'Bengaluru', type: 'Full-time' },
+      { title: 'Guest Experience Associate', loc: 'Multiple Cities', type: 'Full-time' },
+      { title: 'Brand Partnerships Lead', loc: 'Mumbai', type: 'Full-time' },
+      { title: 'Content & Studio Producer', loc: 'Hyderabad', type: 'Contract' }
+    ];
+    const galleryPhotos = [
+      { section: 'Exterior', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714661/cinemark_assets/jnggqiticwkyobjvjjf9.jpg', cap: 'Signature Lounge' },
+      { section: 'Lobby', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714662/cinemark_assets/yjhj5dfpqjq4nc7pgfkz.jpg', cap: 'Classic Recliner Hall' },
+      { section: 'Auditorium', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714663/cinemark_assets/ptk6o9taux16vfouphsr.jpg', cap: 'Signature Screen — Aisle View' },
+      { section: 'Food & Beverage', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714658/cinemark_assets/rgbyhny0qg4gumh7chx7.jpg', cap: 'The Cafeteria' },
+      { section: 'VIP Lounge', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714663/cinemark_assets/hv6kd7kapsczkeakuzyd.jpg', cap: 'Premium Recliner Detail' },
+      { section: 'Exterior', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714660/cinemark_assets/wrstiweg5dk5aqgtucd9.jpg', cap: 'Downtown Snack Corner' },
+      { section: 'Lobby', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714664/cinemark_assets/podck5nkg7u1uwnz0rkk.jpg', cap: 'Cafeteria & Lounge' },
+      { section: 'Auditorium', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714665/cinemark_assets/mipizszd2zwp4hxhnq15.jpg', cap: 'Velvet Hall' },
+      { section: 'Food & Beverage', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714666/cinemark_assets/ye9e1du6blv27kglpfqn.jpg', cap: 'Spectra X Immersive Hall' },
+      { section: 'VIP Lounge', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714667/cinemark_assets/zaden8i1pws26c0hrmvq.jpg', cap: 'Spectra X — Screen View' },
+      { section: 'Exterior', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714667/cinemark_assets/b9m8ar2x73jhodxn1bif.jpg', cap: 'Smart Cinema Hall' },
+      { section: 'Lobby', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714657/cinemark_assets/b9vy7qfsyrxrypd9odci.jpg', cap: 'Luxury Waiting Lounge' },
+      { section: 'Auditorium', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714668/cinemark_assets/vyfzpgejcqsdgwztezlm.jpg', cap: 'Downtown Corridor' },
+      { section: 'Food & Beverage', src: 'https://res.cloudinary.com/mibjryxu/image/upload/v1784714659/cinemark_assets/dxmuqcok1rvswyq5duui.jpg', cap: 'Fresh Popcorn, Always' }
+    ];
+
+
+    /* ---------------- RENDER STATIC DATA ---------------- */
+    function ecoCardHTML(e) { return `<div class="eco-card" onclick="openEcoModal('${e.name}')"><div class="eco-num">${e.n}</div><h3>${e.name}</h3><p>${e.desc}</p></div>`; }
+    document.getElementById('ecoPreview').innerHTML = ecoData.slice(0, 5).map(ecoCardHTML).join('');
+    document.getElementById('ecoFull').innerHTML = ecoData.map(ecoCardHTML).join('');
+
+    function movieCardHTML(m, forBooking) {
+      const action = forBooking ? `selectMovie(${m.id})` : `go('booking')`;
+      return `<div class="movie-card" onclick="${action}">
+    <div class="movie-poster"><span>${m.letter}</span></div>
+    <div class="movie-body"><div class="movie-rating">★ ${m.rating}</div><h4>${m.title}</h4><p>${m.genre}</p>
+    <div class="movie-cta">Book Now</div></div></div>`;
+    }
+    document.getElementById('movieGrid').innerHTML = moviesData.map(m => movieCardHTML(m, false)).join('');
+    document.getElementById('bookingMovieGrid').innerHTML = moviesData.map(m => movieCardHTML(m, true)).join('');
+
+    document.getElementById('caseTrack').innerHTML = caseData.map(c => `
+  <div class="case-card"><div class="case-visual"><span>${c.title}</span></div>
+  <div class="case-body"><div class="tag">${c.tag}</div><h4>${c.title}</h4><p>${c.desc}</p></div></div>`).join('');
+
+    window.liveGalleryPhotos = [...galleryPhotos];
+
+    window.currentGalleryFilter = 'All';
+
+    window.filterGallery = function(section) {
+      window.currentGalleryFilter = section;
+      const btns = document.querySelectorAll('#galleryFilters .filter-btn');
+      btns.forEach(btn => {
+        if (btn.innerText === section) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      window.renderPublicGallery();
+    }
+
+    window.renderPublicGallery = function() {
+      const sectionFilter = window.currentGalleryFilter;
+      document.getElementById('galleryGrid').innerHTML = window.liveGalleryPhotos.map((g, i) => {
+        if (sectionFilter !== 'All' && g.section !== sectionFilter) return '';
+        return `<div class="gallery-item" onclick="openGalleryModal(${i})"><img src="${g.src}" alt="${g.cap}" loading="lazy"><div class="cap">${g.cap}</div></div>`;
+      }).join('');
+
+      /* Real photo strip (Inside Cinemark) */
+      const stripPhotos = [...window.liveGalleryPhotos, ...window.liveGalleryPhotos]; // loop
+      document.getElementById('photoStrip').innerHTML = stripPhotos.map(g =>
+        `<div class="strip-item"><img src="${g.src}" alt="${g.cap}" loading="lazy"><div class="cap">${g.cap}</div></div>`).join('');
+    }
+
+    window.renderPublicGallery();
+
+    /* Hero scroll animation canvas setup */
+    const frameCount = 300;
+    const frames = [];
+    let loadedCount = 0;
+    const canvas = document.getElementById('heroCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentFrameIndex = 1;
+    let ticking = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawFrame(currentFrameIndex);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Image loading logic
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      const frameNum = String(i).padStart(3, '0');
+      img.src = `ezgif-frame-${frameNum}.jpg`;
+      img.onload = () => {
+        loadedCount++;
+        if (i === 1) {
+          drawFrame(1);
+        }
+      };
+      frames.push(img);
+    }
+
+    function drawFrame(index) {
+      const img = frames[index - 1];
+      if (img && img.complete) {
+        const canvasRatio = canvas.width / canvas.height;
+        const imgRatio = img.width / img.height;
+        let drawWidth, drawHeight, drawX, drawY;
+
+        if (canvasRatio > imgRatio) {
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / imgRatio;
+          drawX = 0;
+          drawY = (canvas.height - drawHeight) / 2;
+        } else {
+          drawWidth = canvas.height * imgRatio;
+          drawHeight = canvas.height;
+          drawX = (canvas.width - drawWidth) / 2;
+          drawY = 0;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+      }
+    }
+
+    // Initial resize to set dimensions
+    resizeCanvas();
+
+    function updateScrollAnimation() {
+      const container = document.getElementById('heroScrollContainer');
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const scrollableDistance = container.offsetHeight - window.innerHeight;
+
+      if (scrollableDistance <= 0) return;
+
+      let scrollProgress = -rect.top / scrollableDistance;
+      scrollProgress = Math.max(0, Math.min(1, scrollProgress));
+
+      const targetFrame = Math.floor(scrollProgress * (frameCount - 1)) + 1;
+      if (targetFrame !== currentFrameIndex) {
+        currentFrameIndex = targetFrame;
+        drawFrame(currentFrameIndex);
+      }
+
+      // Fade out text overlay after 20% scroll
+      // By 20% scroll progress (progress = 0.2), opacity should be exactly 0.
+      const textOpacity = Math.max(0, 1 - (scrollProgress / 0.2));
+
+      const heroContent = document.querySelector('.hero-content');
+      const rotateBadge = document.querySelector('.rotate-badge');
+
+      if (heroContent) {
+        heroContent.style.opacity = textOpacity;
+        heroContent.style.pointerEvents = textOpacity <= 0 ? 'none' : 'auto';
+      }
+      if (rotateBadge) {
+        rotateBadge.style.opacity = textOpacity;
+        rotateBadge.style.pointerEvents = textOpacity <= 0 ? 'none' : 'auto';
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollAnimation);
+        ticking = true;
+      }
+    });
+
+    document.getElementById('faqList').innerHTML = faqData.map((f, i) => `
+  <div class="faq-item" id="faq-${i}"><div class="faq-q" onclick="toggleFaq(${i})"><span>${f.q}</span><span class="plus">+</span></div>
+  <div class="faq-a">${f.a}</div></div>`).join('');
+
+    document.getElementById('jobList').innerHTML = jobsData.map(j => `
+  <div class="job-card" onclick="openJobModal('${j.title}')"><div><h4>${j.title}</h4><p>${j.loc} · ${j.type}</p></div><div class="job-tag">Apply →</div></div>`).join('');
+
+
+    /* ---------------- ROUTING ---------------- */
+    function go(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + page) || document.getElementById('page-home');
+      target.classList.add('active');
+      document.querySelectorAll('.nav-links a[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === page));
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      closeModal();
+      refreshReveals();
+      closeMobileNav();
+      
+      // Update hash to persist page state
+      window.location.hash = page;
+
+      // Automatically handle admin auth view
+      if (page === 'admin') {
+        if (localStorage.getItem('cinemark_admin_token')) {
+          showDashboard();
+        } else {
+          showLogin();
+        }
+      }
+    }
+
+    /* ---------------- NAV: MORE + BURGER ---------------- */
+    function toggleMore(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('navMore').classList.toggle('open');
+      document.getElementById('navApp').classList.remove('open');
+    }
+    function toggleApp(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('navApp').classList.toggle('open');
+      document.getElementById('navMore').classList.remove('open');
+    }
+    function toggleBurger() {
+      document.getElementById('burger').classList.toggle('open');
+      document.getElementById('navLinks').classList.toggle('open');
+      if (!document.getElementById('navLinks').classList.contains('open')) {
+        document.getElementById('navMore').classList.remove('open');
+        document.getElementById('navApp').classList.remove('open');
+      }
+    }
+    function closeMobileNav() {
+      document.getElementById('burger').classList.remove('open');
+      document.getElementById('navLinks').classList.remove('open');
+      document.getElementById('navMore').classList.remove('open');
+      document.getElementById('navApp').classList.remove('open');
+    }
+    document.addEventListener('click', function (e) {
+      const navMore = document.getElementById('navMore');
+      if (navMore && !navMore.contains(e.target)) {
+        navMore.classList.remove('open');
+      }
+      const navApp = document.getElementById('navApp');
+      if (navApp && !navApp.contains(e.target)) {
+        navApp.classList.remove('open');
+      }
+    });
+
+    /* ---------------- MODALS ---------------- */
+    function openModal(html) { document.getElementById('modalContent').innerHTML = html; document.getElementById('modalOverlay').classList.add('show'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+    function openEcoModal(name) {
+      const e = ecoData.find(x => x.name === name);
+      openModal(`<h3>${e.name}</h3><p>${e.desc}</p><p style="color:var(--gold-soft); font-size:0.8rem; letter-spacing:0.1em;">PART OF THE CINEMARK SUITE — PRODUCT ${e.n}</p>`);
+    }
+    function openGalleryModal(i) {
+      const g = window.liveGalleryPhotos ? window.liveGalleryPhotos[i] : galleryPhotos[i];
+      openModal(`<img class="modal-photo" src="${g.src}" alt="${g.cap}"><h3>${g.cap}</h3><p>A glimpse inside Cinemark Group.</p>`);
+    }
+    function openJobModal(title) {
+      openModal(`<h3>${title}</h3><p>We're hiring passionate people to help build next-gen cinema experiences.</p>
+  <form class="aurelia-form" onsubmit="submitForm(event, null); this.closest('.modal-box').querySelector('.form-success')?.classList.add('show'); return false;">
+    <div><label>Full Name</label><input type="text" required></div>
+    <div><label>Email</label><input type="email" required></div>
+    <button class="btn-primary" type="submit">Submit Application →</button>
+    <div class="form-success show" style="display:none;" id="jobSuccess">✓ Application received — thank you for your interest.</div>
+  </form>`);
+    }
+
+    /* ---------------- FORMS ---------------- */
+    function submitForm(e, successId) {
+      e.preventDefault();
+      if (successId) { document.getElementById(successId).classList.add('show'); }
+      else {
+        const btn = e.target.querySelector('button');
+        const succ = e.target.querySelector('.form-success');
+        if (succ) succ.classList.add('show');
+      }
+      return false;
+    }
+
+    /* ---------------- FAQ ---------------- */
+    function toggleFaq(i) { document.getElementById('faq-' + i).classList.toggle('open'); }
+
+    /* ---------------- CAROUSEL ---------------- */
+    function scrollCarousel(dir) { document.getElementById('caseTrack').scrollBy({ left: dir * 340, behavior: 'smooth' }); }
+
+    /* ---------------- LEGAL TABS ---------------- */
+    function showLegal(id, el) {
+      document.querySelectorAll('.legal-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.legal-content').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('legal-' + id).classList.add('active');
+    }
+
+    /* ---------------- BOOKING FLOW ---------------- */
+    let bookingState = { movie: null, showtime: null, seats: [], price: 300 };
+    function bookingGoStep(n) {
+      document.querySelectorAll('.booking-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('booking-step-' + n).classList.add('active');
+      for (let i = 1; i <= 4; i++) {
+        const pill = document.getElementById('step-pill-' + i);
+        pill.classList.toggle('active', i === n);
+        pill.classList.toggle('done', i < n);
+      }
+      document.getElementById('summaryBar').style.display = (n === 3) ? 'flex' : 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function selectMovie(id) {
+      bookingState.movie = moviesData.find(m => m.id === id);
+      document.getElementById('showtimeMovieLabel').innerHTML = `Showtimes for <b style="color:var(--gold-soft); font-family:'Fraunces',serif;">${bookingState.movie.title}</b>`;
+      const times = ['10:30 AM', '1:15 PM', '4:00 PM', '7:00 PM', '9:45 PM'];
+      const formats = ['2D', '2D', 'IMAX', 'Signature', '4DX'];
+      document.getElementById('showtimeGrid').innerHTML = times.map((t, i) =>
+        `<div class="showtime-btn" onclick="selectShowtime('${t}','${formats[i]}',this)"><div class="time">${t}</div><div class="fmt">${formats[i]}</div></div>`).join('');
+      go('booking'); bookingGoStep(2);
+    }
+    function selectShowtime(t, fmt, el) {
+      document.querySelectorAll('.showtime-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      bookingState.showtime = t + ' · ' + fmt;
+      buildSeatMap();
+      setTimeout(() => bookingGoStep(3), 250);
+    }
+    function buildSeatMap() {
+      const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+      const soldSeats = new Set();
+      while (soldSeats.size < 8) { soldSeats.add(rows[Math.floor(Math.random() * 6)] + (Math.floor(Math.random() * 10) + 1)); }
+      bookingState.seats = [];
+      const map = document.getElementById('seatMap');
+      map.innerHTML = '';
+      rows.forEach(r => {
+        const rowDiv = document.createElement('div'); rowDiv.className = 'seat-row';
+        rowDiv.innerHTML = `<div class="row-label">${r}</div>`;
+        for (let i = 1; i <= 10; i++) {
+          const id = r + i;
+          const sold = soldSeats.has(id);
+          const seat = document.createElement('div');
+          seat.className = 'seat' + (sold ? ' sold' : '');
+          seat.textContent = i;
+          if (!sold) seat.onclick = () => toggleSeat(id, seat);
+          rowDiv.appendChild(seat);
+        }
+        map.appendChild(rowDiv);
+      });
+    }
+    function toggleSeat(id, el) {
+      const idx = bookingState.seats.indexOf(id);
+      if (idx > -1) { bookingState.seats.splice(idx, 1); el.classList.remove('selected'); }
+      else { bookingState.seats.push(id); el.classList.add('selected'); }
+      const count = bookingState.seats.length;
+      document.getElementById('seatCount').textContent = count;
+      document.getElementById('seatTotal').textContent = '₹' + (count * bookingState.price);
+      document.getElementById('proceedBtn').disabled = count === 0;
+    }
+    function proceedToConfirm() {
+      const id = 'AUR-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      document.getElementById('confirmSummary').textContent =
+        `${bookingState.movie.title} · ${bookingState.showtime} · Seats ${bookingState.seats.join(', ')} · Total ₹${bookingState.seats.length * bookingState.price}`;
+      document.getElementById('confirmId').textContent = 'Booking ID: ' + id;
+      bookingGoStep(4);
+    }
+    function resetBooking() {
+      bookingState = { movie: null, showtime: null, seats: [], price: 300 };
+      bookingGoStep(1);
+    }
+
+    /* ---------------- CURTAIN INTRO ---------------- */
+    window.addEventListener('load', () => {
+      setTimeout(() => { document.getElementById('curtain-wrap').classList.add('open'); document.getElementById('revealTag').classList.add('fade'); }, 900);
+      setTimeout(() => { document.getElementById('curtain-wrap').classList.add('hide'); }, 2400);
+    });
+
+    /* ---------------- CURSOR ---------------- */
+    const glow = document.getElementById('cursor-glow'), dot = document.getElementById('cursor-dot');
+    window.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
+      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+    });
+
+    /* ---------------- SCROLL REVEAL ---------------- */
+    let io;
+    function initReveals() {
+      io = new IntersectionObserver(entries => {
+        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); } });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal:not(.in), .stagger:not(.in)').forEach(el => io.observe(el));
+    }
+    function refreshReveals() {
+      document.querySelectorAll('.page.active .reveal:not(.in), .page.active .stagger:not(.in)').forEach(el => {
+        el.classList.add('in');
+      });
+    }
+    initReveals();
+
+    /* ---------------- STAT COUNTERS ---------------- */
+    const statIO = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target, target = parseInt(el.dataset.target);
+          let current = 0; const step = Math.max(1, Math.ceil(target / 60));
+          const timer = setInterval(() => { current += step; if (current >= target) { current = target; clearInterval(timer); } el.textContent = current; }, 25);
+          statIO.unobserve(el);
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.stat-num').forEach(el => statIO.observe(el));
+  </script>
+  
+  <script>
+    // --- API Configuration ---
+    const API_URL = 'http://localhost:3000/api';
+    
+    // --- AUTHENTICATION ---
+    const loginView = document.getElementById('admin-login-section');
+    const dashboardView = document.getElementById('admin-dashboard-section');
+    const loginForm = document.getElementById('adminLoginForm');
+    
+    function showLogin() {
+      loginView.style.display = 'block';
+      dashboardView.style.display = 'none';
+    }
+    
+    function showDashboard() {
+      loginView.style.display = 'none';
+      dashboardView.style.display = 'block';
+      loadAdminGallery();
+      loadAdminNavLinks();
+      loadAdminContent();
+    }
+    
+    function getAdminPassword() {
+      return localStorage.getItem('cinemark_admin_token') || '';
+    }
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPassword').value;
+        try {
+          const res = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json();
+          if (data.success) {
+            localStorage.setItem('cinemark_admin_token', password);
+            showDashboard();
+          } else {
+            alert('Invalid Password');
+          }
+        } catch(err) {
+          alert('Login failed: Server offline or error.');
+        }
+      });
+    }
+
+    window.closeAdmin = function() {
+      go('home');
+    };
+
+    window.logout = async function() {
+      localStorage.removeItem('cinemark_admin_token');
+      showLogin();
+    };
+
+    // Auto-login check on page load if token exists
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchCMSNavbar();
+      fetchCMSContent();
+      fetchPublicGallery();
+    });
+
+    window.openAdmin = function(e) {
+      if (e) e.preventDefault();
+      go('admin');
+    };
+
+    // --- GALLERY CMS ---
+    async function fetchPublicGallery() {
+      try {
+        const res = await fetch(`${API_URL}/gallery`);
+        const photos = await res.json();
+        
+        if (photos && photos.length > 0) {
+          const dbPhotos = photos.map(p => ({
+            src: p.url,
+            cap: p.title || '',
+            section: p.section || 'All' 
+          }));
+          window.liveGalleryPhotos = [...galleryPhotos, ...dbPhotos];
+          
+          if (typeof window.renderPublicGallery === 'function') {
+            window.renderPublicGallery();
+          }
+        }
+      } catch(e) {
+        console.log('Error fetching gallery');
+      }
+    }
+
+    async function loadAdminGallery() {
+      const adminList = document.getElementById('adminPhotoList');
+      if(!adminList) return;
+      adminList.innerHTML = '<p>Loading photos...</p>';
+      
+      try {
+        const res = await fetch(`${API_URL}/gallery`);
+        const photos = await res.json();
+        
+        if(photos.length === 0) {
+          adminList.innerHTML = '<p style="color:var(--cream-dim);">No photos found.</p>';
+          return;
+        }
+
+        let html = '';
+        photos.forEach(photo => {
+          html += `
+            <div style="border: 1px solid var(--line); background: var(--ink3); padding: 12px; position:relative;">
+              <img src="${photo.url}" alt="${photo.title}" style="width:100%; height:160px; object-fit:cover; margin-bottom: 12px; border: 1px solid var(--line);">
+              <div style="font-size: 0.85rem; margin-bottom: 12px; color: var(--cream);">${photo.title || ''}</div>
+              <button class="btn-ghost" style="padding: 8px 12px; font-size: 0.75rem; width: 100%; color: var(--velvet); border-color: var(--velvet);" onclick="deleteGalleryPhoto(${photo.id})">Delete</button>
+            </div>
+          `;
+        });
+        adminList.innerHTML = html;
+      } catch(e) {
+        adminList.innerHTML = '<p style="color:var(--velvet);">Error loading photos.</p>';
+      }
+    }
+
+    window.deleteGalleryPhoto = async function(id) {
+      if(!confirm('Delete this photo?')) return;
+      try {
+        await fetch(`${API_URL}/gallery/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-password': getAdminPassword() }
+        });
+        loadAdminGallery();
+        fetchPublicGallery();
+      } catch(e) {
+        alert('Error deleting photo');
+      }
+    }
+
+    const uploadForm = document.getElementById('uploadPhotoForm');
+    if (uploadForm) {
+      uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('photoFile');
+        const cap = document.getElementById('photoCaption').value;
+        const section = document.getElementById('photoSection').value;
+        const submitBtn = uploadForm.querySelector('button[type="submit"]');
+        
+        if (!fileInput.files.length) return alert("Select a file");
+        
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        
+        // compress before upload
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        const objectUrl = URL.createObjectURL(file);
+        
+        submitBtn.textContent = 'Compressing...';
+        submitBtn.disabled = true;
+
+        img.onload = async () => {
+          URL.revokeObjectURL(objectUrl);
+          
+          let width = img.width;
+          let height = img.height;
+          const MAX = 1200;
+
+          if (width > height) {
+            if (width > MAX) { height *= MAX / width; width = MAX; }
+          } else {
+            if (height > MAX) { width *= MAX / height; height = MAX; }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(async (blob) => {
+            formData.append('image', blob, file.name);
+            formData.append('title', cap);
+            formData.append('section', section);
+            
+            submitBtn.textContent = 'Uploading...';
+            
+            try {
+              const res = await fetch(`${API_URL}/gallery`, {
+                method: 'POST',
+                headers: { 'x-admin-password': getAdminPassword() },
+                body: formData
+              });
+              if(res.ok) {
+                uploadForm.reset();
+                loadAdminGallery();
+                fetchPublicGallery();
+                alert('Upload successful!');
+              } else {
+                alert('Upload failed');
+              }
+            } catch(e) {
+              alert('Error uploading');
+            }
+            submitBtn.textContent = 'Upload Photo';
+            submitBtn.disabled = false;
+          }, 'image/jpeg', 0.65);
+        };
+        img.src = objectUrl;
+      });
+    }
+
+    // --- NAVIGATION CMS ---
+    async function fetchCMSNavbar() {
+      try {
+        const res = await fetch(`${API_URL}/navbar`);
+        const links = await res.json();
+        if(links.length === 0) return; 
+        
+        let mainLinks = '';
+        let moreLinks = '';
+        
+        links.forEach(data => {
+          const linkHTML = `<li><a onclick="go('${data.href}')" data-page="${data.href}">${data.title}</a></li>`;
+          const moreLinkHTML = `<a onclick="go('${data.href}')">${data.title}</a>`;
+          
+          if(!data.is_more) {
+            mainLinks += linkHTML;
+          } else {
+            moreLinks += moreLinkHTML;
+          }
+        });
+        
+        const navContainer = document.getElementById('navLinks');
+        if(navContainer) {
+          let finalHTML = mainLinks;
+          if(moreLinks !== '') {
+            finalHTML += `
+              <li class="nav-more" id="navMore">
+                <a onclick="toggleMore(event)">More ▾</a>
+                <div class="nav-more-panel">${moreLinks}</div>
+              </li>
+            `;
+          }
+          navContainer.innerHTML = finalHTML;
+        }
+      } catch(e) {
+        console.log("Could not fetch CMS Navbar.");
+      }
+    }
+
+    async function loadAdminNavLinks() {
+      const adminNavList = document.getElementById('adminNavList');
+      if(!adminNavList) return;
+      adminNavList.innerHTML = '<p>Loading...</p>';
+      try {
+        const res = await fetch(`${API_URL}/navbar`);
+        const links = await res.json();
+        
+        if(links.length === 0) {
+          adminNavList.innerHTML = '<p style="color:var(--cream-dim);">No custom links found. Hardcoded links are showing.</p>';
+          return;
+        }
+        let html = '';
+        links.forEach(data => {
+          html += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--ink3); padding:10px; border:1px solid var(--line);">
+              <div>
+                <strong>${data.title}</strong> &rarr; '${data.href}' 
+                <span style="color:var(--cream-dim); font-size:0.8em; margin-left:10px;">(Order: ${data.sort_order}, More: ${data.is_more})</span>
+              </div>
+              <button class="btn-ghost" style="padding:4px 8px; font-size:0.8em; color:var(--velvet); border-color:var(--velvet);" onclick="deleteNavLink(${data.id})">Delete</button>
+            </div>
+          `;
+        });
+        adminNavList.innerHTML = html;
+      } catch(e) {
+        adminNavList.innerHTML = '<p style="color:var(--velvet);">Error loading nav links.</p>';
+      }
+    }
+
+    const addNavForm = document.getElementById('addNavForm');
+    if(addNavForm) {
+      addNavForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('navTitle').value;
+        const href = document.getElementById('navTarget').value;
+        const sortOrder = parseInt(document.getElementById('navOrder').value) || 0;
+        const isMore = document.getElementById('navLocation').value === 'more';
+        
+        try {
+          await fetch(`${API_URL}/navbar`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-admin-password': getAdminPassword()
+            },
+            body: JSON.stringify({ title, href, sortOrder, isMore })
+          });
+          addNavForm.reset();
+          loadAdminNavLinks();
+          fetchCMSNavbar();
+        } catch(e) {
+          alert("Error adding link");
+        }
+      });
+    }
+
+    window.deleteNavLink = async function(id) {
+      if(!confirm("Delete this navigation link?")) return;
+      try {
+        await fetch(`${API_URL}/navbar/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-password': getAdminPassword() }
+        });
+        loadAdminNavLinks();
+        fetchCMSNavbar();
+      } catch(e) {
+        alert("Error deleting link");
+      }
+    };
+
+    // --- SITE CONTENT CMS ---
+    async function fetchCMSContent() {
+      try {
+        const res = await fetch(`${API_URL}/content`);
+        const content = await res.json();
+        
+        content.forEach(c => {
+          const el = document.getElementById(c.id);
+          if(el) el.innerHTML = c.html_content;
+        });
+      } catch(e) {
+        console.log("Could not fetch CMS Content.");
+      }
+    }
+
+    async function loadAdminContent() {
+      try {
+        const res = await fetch(`${API_URL}/content`);
+        const content = await res.json();
+        
+        content.forEach(c => {
+          if (c.id === 'cms-hero_title') document.getElementById('contentHeroTitle').value = c.html_content;
+          if (c.id === 'cms-about_paragraph') document.getElementById('contentAbout').value = c.html_content;
+        });
+      } catch(e) {
+        console.log("Error loading admin content", e);
+      }
+    }
+
+    const editContentForm = document.getElementById('editContentForm');
+    if(editContentForm) {
+      editContentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const heroTitle = document.getElementById('contentHeroTitle').value;
+        const aboutParagraph = document.getElementById('contentAbout').value;
+        const status = document.getElementById('contentStatus');
+        
+        try {
+          // update hero
+          await fetch(`${API_URL}/content`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-admin-password': getAdminPassword() },
+            body: JSON.stringify({ id: 'cms-hero_title', html_content: heroTitle })
+          });
+          // update about
+          await fetch(`${API_URL}/content`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-admin-password': getAdminPassword() },
+            body: JSON.stringify({ id: 'cms-about_paragraph', html_content: aboutParagraph })
+          });
+          
+          status.textContent = "✔ Content saved!";
+          status.style.display = 'block';
+          status.style.borderColor = 'var(--green)';
+          status.style.color = 'var(--green)';
+          status.style.background = 'rgba(76, 175, 125, 0.12)';
+          
+          fetchCMSContent(); 
+        } catch(error) {
+          status.textContent = "Error saving";
+          status.style.borderColor = 'var(--velvet)';
+          status.style.color = 'var(--velvet)';
+          status.style.background = 'rgba(179,30,61,0.12)';
+          status.style.display = 'block';
+        }
+      });
+    }
+
+    // Initialize page on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        go(hash);
+      } else {
+        go('home');
+      }
+    });
+</script>
+</body>
+
+</html>
