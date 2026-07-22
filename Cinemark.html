@@ -3221,7 +3221,8 @@
   
   <script>
     // --- API Configuration ---
-    const API_URL = 'http://localhost:3000/api';
+    // For production, use relative URL so it dynamically uses the Render domain
+    const API_URL = '/api';
     
     // --- AUTHENTICATION ---
     const loginView = document.getElementById('admin-login-section');
