@@ -9,15 +9,15 @@
     @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;1,400;1,500&family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
 
     :root {
-      --ink: #0d0a0f;
-      --ink2: #160f1a;
-      --ink3: #1d1420;
-      --gold: #c9a227;
+      --ink: #050505;
+      --ink2: #0a0a0a;
+      --ink3: #111111;
+      --gold: #D6B553;
       --gold-soft: #e6c664;
-      --velvet: #b31e3d;
+      --velvet: #D6B553;
       --cream: #f3ead9;
       --cream-dim: #c9bfae;
-      --magenta: #e0447b;
+      --magenta: #D6B553;
       --green: #4caf7d;
       --line: rgba(243, 234, 217, 0.12);
     }
@@ -61,7 +61,7 @@
       height: 520px;
       border-radius: 50%;
       pointer-events: none;
-      background: radial-gradient(circle, rgba(201, 162, 39, 0.13) 0%, rgba(201, 162, 39, 0.05) 35%, transparent 70%);
+      background: radial-gradient(circle, rgba(214, 181, 83, 0.13) 0%, rgba(214, 181, 83, 0.05) 35%, transparent 70%);
       transform: translate(-50%, -50%);
       z-index: 9998;
       transition: width .3s, height .3s;
@@ -539,7 +539,7 @@
 
     .btn-primary:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 30px -8px rgba(201, 162, 39, .6);
+      box-shadow: 0 10px 30px -8px rgba(214, 181, 83, .6);
     }
 
     .btn-ghost {
@@ -600,8 +600,8 @@
       z-index: 3;
       opacity: 0.5;
       pointer-events: none;
-      background: radial-gradient(ellipse 60% 40% at 20% -10%, rgba(201, 162, 39, .18), transparent 60%),
-        radial-gradient(ellipse 50% 40% at 85% 10%, rgba(224, 68, 123, .12), transparent 60%);
+      background: radial-gradient(ellipse 60% 40% at 20% -10%, rgba(214, 181, 83, .18), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 10%, rgba(214, 181, 83, .12), transparent 60%);
       animation: beamShift 14s ease-in-out infinite alternate;
     }
 
@@ -660,7 +660,7 @@
       justify-content: center;
       color: var(--ink);
       font-size: 1.1rem;
-      box-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+      box-shadow: 0 0 20px rgba(214, 181, 83, 0.5);
       transition: transform .3s;
     }
 
@@ -761,7 +761,7 @@
       position: absolute;
       inset: 0;
       opacity: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(224, 68, 123, .18), transparent 60%);
+      background: radial-gradient(circle at 30% 20%, rgba(214, 181, 83, .18), transparent 60%);
       transition: opacity .5s;
     }
 
@@ -942,7 +942,7 @@
       position: relative;
       height: 420px;
       overflow: hidden;
-      background: linear-gradient(135deg, #241621, #150d17);
+      background: linear-gradient(135deg, #1c1c1c, #080808);
     }
 
     .luxury-visual img {
@@ -1077,7 +1077,7 @@
 
     .movie-poster {
       height: 250px;
-      background: linear-gradient(160deg, #2a1a26, #140b16);
+      background: linear-gradient(160deg, #222222, #030303);
       position: relative;
       display: flex;
       align-items: center;
@@ -1132,7 +1132,7 @@
 
     .cta-band {
       text-align: center;
-      background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(179, 30, 61, .25), transparent 70%), var(--ink);
+      background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(214, 181, 83, .25), transparent 70%), var(--ink);
       border-top: 1px solid var(--line);
     }
 
@@ -1323,7 +1323,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(160deg, rgba(224, 68, 123, 0.0), rgba(13, 10, 15, 0.0));
+      background: linear-gradient(160deg, rgba(214, 181, 83, 0.0), rgba(13, 10, 15, 0.0));
       opacity: 0;
       transition: opacity .4s;
     }
@@ -1481,7 +1481,7 @@
 
     .case-visual {
       height: 190px;
-      background: linear-gradient(160deg, #2a1a26, #140b16);
+      background: linear-gradient(160deg, #222222, #030303);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1785,8 +1785,8 @@
     }
 
     .seat.sold {
-      background: #2a1a26;
-      color: #5a4a56;
+      background: #222222;
+      color: #444444;
       cursor: not-allowed;
       border-color: transparent;
     }
@@ -1819,7 +1819,7 @@
     }
 
     .legend-box.sold {
-      background: #2a1a26;
+      background: #222222;
     }
 
     .booking-summary-bar {
@@ -1959,6 +1959,60 @@
         transition-duration: 0.01ms !important;
       }
     }
+  
+    
+    /* --- PRODUCTION MOBILE CSS --- */
+    @media(max-width: 768px) {
+      body, html {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .hero-title {
+        font-size: 3.2rem !important;
+        letter-spacing: -1px !important;
+      }
+      
+      .page-title {
+        font-size: 2.2rem !important;
+      }
+      
+      .block, .block-tight {
+        padding: 40px 20px !important;
+      }
+      
+      /* Force all grids to single column on mobile */
+      .luxury, .two-col, .form-row, .footer-grid, .stats-grid, .gallery-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 30px !important;
+        width: 100% !important;
+      }
+      
+      /* Fix image wrappers that might shrink */
+      .luxury-visual {
+        width: 100% !important;
+        height: 300px !important;
+      }
+      
+      .footer-col {
+        text-align: center;
+        width: 100% !important;
+      }
+      
+      nav .nav-links {
+        width: 100%;
+      }
+      
+      button, .btn-ghost, .btn-gold {
+        width: 100% !important;
+        text-align: center !important;
+        justify-content: center !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -2675,7 +2729,7 @@
           <div><label>Email</label><input type="email" id="adminEmail" required></div>
           <div style="margin-top: 15px;"><label>Password</label><input type="password" id="adminPassword" required></div>
           <button class="btn-primary" type="submit" style="margin-top: 25px; width: 100%; justify-content: center;">Login →</button>
-          <div class="form-success" id="loginError" style="border-color: var(--velvet); color: var(--velvet); background: rgba(179,30,61,0.12); display:none; margin-top:15px;"></div>
+          <div class="form-success" id="loginError" style="border-color: var(--velvet); color: var(--velvet); background: rgba(214, 181, 83,0.12); display:none; margin-top:15px;"></div>
         </form>
       </div>
 
@@ -3605,7 +3659,7 @@
           status.textContent = "Error saving";
           status.style.borderColor = 'var(--velvet)';
           status.style.color = 'var(--velvet)';
-          status.style.background = 'rgba(179,30,61,0.12)';
+          status.style.background = 'rgba(214, 181, 83,0.12)';
           status.style.display = 'block';
         }
       });
