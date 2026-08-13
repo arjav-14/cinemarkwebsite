@@ -7826,6 +7826,261 @@
         display: none;
       }
     }
+
+    /* ================= JOURNEY ANIMATED MAP ================= */
+    .journey-map-section {
+      padding: 80px 6%;
+      background: var(--noir-1);
+      position: relative;
+      overflow: hidden;
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .journey-map-header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 50px auto;
+    }
+    .journey-map-header h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 3.8vw, 3rem);
+      font-weight: 500;
+      margin: 12px 0 16px 0;
+      color: var(--ivory);
+    }
+    .journey-map-header h2 em {
+      font-style: italic;
+      color: var(--gold-soft);
+    }
+    .journey-map-header p {
+      color: var(--cream-dim);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .journey-map-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+    @media (max-width: 992px) {
+      .journey-map-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .journey-map-visual {
+      position: relative;
+      background: radial-gradient(circle at center, rgba(212,175,55,0.08) 0%, rgba(10,10,12,0.95) 70%);
+      border: 1px solid var(--line-soft);
+      border-radius: 20px;
+      padding: 30px 20px;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    .journey-video-wrap {
+      width: 100%;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.15);
+      border: 1px solid var(--line-soft);
+      background: #000;
+    }
+    .journey-map-video {
+      width: 100%;
+      height: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      display: block;
+      border-radius: 16px;
+    }
+    .journey-map-video::-webkit-media-controls-volume-slider,
+    .journey-map-video::-webkit-media-controls-mute-button,
+    .journey-map-video::-webkit-media-controls-volume-slider-container {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .video-overlay-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(10, 10, 12, 0.85);
+      border: 1px solid var(--gold-dim);
+      color: var(--gold-soft);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .journey-node:hover, .journey-node.active {
+      transform: scale(1.25);
+    }
+    .node-circle {
+      fill: var(--noir-1);
+      stroke: var(--gold);
+      stroke-width: 3;
+      transition: all 0.3s ease;
+    }
+    .journey-node.active .node-circle {
+      fill: var(--gold);
+      stroke: #fff;
+      filter: drop-shadow(0 0 12px var(--gold));
+    }
+    .node-pulse {
+      fill: rgba(212, 175, 55, 0.4);
+      animation: pulseRing 2s infinite ease-out;
+      transform-origin: center;
+    }
+    @keyframes pulseRing {
+      0% { r: 8px; opacity: 0.8; }
+      100% { r: 24px; opacity: 0; }
+    }
+    .node-label {
+      fill: var(--ivory);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-anchor: middle;
+      pointer-events: none;
+      font-family: 'Outfit', sans-serif;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+    }
+    .journey-node.active .node-label {
+      fill: var(--gold-soft);
+      font-weight: 700;
+    }
+    .journey-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .journey-cards-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .journey-cards-list::-webkit-scrollbar-thumb {
+      background: var(--gold-dim);
+      border-radius: 10px;
+    }
+    .cinema-journey-card {
+      background: rgba(20, 20, 24, 0.8);
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      padding: 18px 20px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+    .cinema-journey-card:hover, .cinema-journey-card.active {
+      border-color: var(--gold);
+      background: rgba(35, 30, 20, 0.9);
+      transform: translateX(6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    .cinema-journey-card.start-card {
+      border-left: 4px solid var(--gold);
+    }
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .card-top-row h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      color: var(--ivory);
+      margin: 0;
+    }
+    .city-tag {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-soft);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .card-address {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: var(--cream-dim);
+      font-size: 0.85rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .card-address svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      fill: var(--gold);
+      margin-top: 2px;
+    }
+    .card-features {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .feature-badge {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--ivory);
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .map-controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      width: 100%;
+    }
+    .btn-replay-journey {
+      background: linear-gradient(135deg, var(--gold) 0%, #b89228 100%);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    .btn-replay-journey:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    }
+    .journey-step-indicator {
+      font-size: 0.85rem;
+      color: var(--cream-dim);
+      font-weight: 500;
+    }
+    .journey-step-indicator b {
+      color: var(--gold);
+    }
   </style>
 </head>
 
@@ -7910,6 +8165,135 @@
       </div>
       <div class="photo-strip-wrap reveal">
         <div class="photo-strip" id="photoStrip"></div>
+      </div>
+    </section>
+
+    <!-- ================= ANIMATED JOURNEY MAP ================= -->
+    <section class="journey-map-section" id="journeyMapSection">
+      <div class="journey-map-header reveal">
+        <div class="eyebrow2">EXPANSION JOURNEY</div>
+        <h2>From Tier-3 roots to <em>iconic landmarks.</em></h2>
+        <p>Follow our journey from where it all began in Ambajogai to signature boutique luxury screens across Maharashtra. Click any destination to view location details &amp; exact address.</p>
+      </div>
+
+      <div class="journey-map-container">
+        <!-- MAP VIDEO SIDE -->
+        <div class="journey-map-visual reveal">
+          <div class="journey-video-wrap">
+            <video id="journeyVideo" class="journey-map-video" autoplay loop muted playsinline controls controlsList="novolume nodownload noremoteplayback">
+              <source src="https://res.cloudinary.com/mibjryxu/video/upload/v1786629438/cinemark_assets/iex1qpyi2hw8bisnreyk.mp4" type="video/mp4">
+              <source src="images/india_expansion_map.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-overlay-badge">
+              <span>✦ CINEMARK EXPANSION TOUR</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARDS SIDE -->
+        <div class="journey-cards-list reveal" id="journeyCardsList">
+          <!-- 1. Mohan Cinemark (Ambajogai) -->
+          <div class="cinema-journey-card start-card active" data-index="0" onclick="selectJourneyNode(0)">
+            <div class="card-top-row">
+              <h3>Mohan Cinemark</h3>
+              <span class="city-tag">Ambajogai</span>
+            </div>
+            <div class="card-address">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>Prashant Nagar, Dr. B.R Ambedkar Road, Ambajogai, Maharashtra 431517, India</span>
+            </div>
+            <div class="card-features">
+              <span class="feature-badge">Where the Journey Began</span>
+              <span class="feature-badge">Ticket Cancellation</span>
+              <span class="feature-badge">F&amp;B</span>
+            </div>
+          </div>
+
+          <!-- 2. Taj Cinemark (Dharashiv) -->
+          <div class="cinema-journey-card" data-index="1" onclick="selectJourneyNode(1)">
+            <div class="card-top-row">
+              <h3>Taj Cinemark</h3>
+              <span class="city-tag">Dharashiv</span>
+            </div>
+            <div class="card-address">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>Solapur Road, Near Taj Mahal Masjid, Dharashiv, Dharashiv (Osmanabad), Maharashtra 415301, India</span>
+            </div>
+            <div class="card-features">
+              <span class="feature-badge">Ticket Cancellation</span>
+              <span class="feature-badge">Parking</span>
+              <span class="feature-badge">F&amp;B</span>
+            </div>
+          </div>
+
+          <!-- 3. Asha Cinemark (Solapur) -->
+          <div class="cinema-journey-card" data-index="2" onclick="selectJourneyNode(2)">
+            <div class="card-top-row">
+              <h3>Asha Cinemark</h3>
+              <span class="city-tag">Solapur</span>
+            </div>
+            <div class="card-address">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>11/A, NH52, Old Police Line, Murarji Peth, Solapur, Maharashtra 413001, India</span>
+            </div>
+            <div class="card-features">
+              <span class="feature-badge">Ticket Cancellation</span>
+              <span class="feature-badge">F&amp;B</span>
+            </div>
+          </div>
+
+          <!-- 4. Goldie Cinemark (Chh. Sambhajinagar) -->
+          <div class="cinema-journey-card" data-index="3" onclick="selectJourneyNode(3)">
+            <div class="card-top-row">
+              <h3>Goldie Cinemark</h3>
+              <span class="city-tag">Chh. Sambhajinagar</span>
+            </div>
+            <div class="card-address">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>Plot No. 5, Vedant Nagar, Railway Station Road, Beside Vedant Hotel, Chhatrapati Sambhaji Nagar.</span>
+            </div>
+            <div class="card-features">
+              <span class="feature-badge">IMAX</span>
+              <span class="feature-badge">Food Court</span>
+              <span class="feature-badge">Parking</span>
+            </div>
+          </div>
+
+          <!-- 5. Ozone Cinema (Nashik) -->
+          <div class="cinema-journey-card" data-index="4" onclick="selectJourneyNode(4)">
+            <div class="card-top-row">
+              <h3>Ozone Cinema</h3>
+              <span class="city-tag">Nashik</span>
+            </div>
+            <div class="card-address">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>Mumbai-Agra Highway, At Post Ojhar, Maharashtra 422206, India</span>
+            </div>
+            <div class="card-features">
+              <span class="feature-badge">Parking</span>
+              <span class="feature-badge">Food Court</span>
+            </div>
+          </div>
+
+          <!-- 6. Cinemark 24 Proxima (Pune) -->
+          <div class="cinema-journey-card" data-index="5" onclick="selectJourneyNode(5)">
+            <div class="card-top-row">
+              <h3>Cinemark 24 Proxima</h3>
+              <span class="city-tag">Pune</span>
+            </div>
+            <div class="card-address">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>Plot No-87/1/5, Sector-1, 24 Proxima, Lakshmi Road Indrayani Nagar, Pune, Maharashtra 411039, India</span>
+            </div>
+            <div class="card-features">
+              <span class="feature-badge">Parking</span>
+              <span class="feature-badge">M-Ticket</span>
+              <span class="feature-badge">Food Court</span>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -8346,108 +8730,7 @@
         <p class="close">A screen at home plays a film.<br><em>A cinema gives a city somewhere to go.</em></p>
       </div>
     </section>
-    <!-- ================= WHY CINEMA ================= -->
-    <section id="whycinema"
-      style="background:var(--noir-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
-      <div class="section-head reveal">
-        <div class="eyebrow">Why Cinema, Why Now</div>
-        <h2 class="h-lg">The experience economy is <em>only getting bigger.</em></h2>
-        <p class="lede">With only 45% of India's ₹22,000 Cr cinema market held by large national chains, 55% remains
-          wide open for boutique brands — a once-in-a-generation window for early franchise partners.</p>
-      </div>
-      <div class="kpi-band stagger">
-        <div class="kpi"><b>₹22,000 Cr</b><span>Indian cinema market · 2025</span></div>
-        <div class="kpi"><b>8.5%</b><span>Industry CAGR</span></div>
-        <div class="kpi"><b>55%</b><span>Open for boutique brands</span></div>
-        <div class="kpi"><b>₹10,000 Cr</b><span>Boutique &amp; non-multiplex segment</span></div>
-        <div class="kpi"><b>₹5,000–7,500 Cr</b><span>F&amp;B revenue opportunity</span></div>
-      </div>
-      <div class="wave-grid stagger">
-        <div class="wave-card">
-          <div class="glyph">I</div>
-          <h4>India Watches More Than Anyone</h4>
-          <p>The world's largest film-producing nation, with a young population and deep cinema culture across every
-            language and city tier.</p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">II</div>
-          <h4>The Experience Economy</h4>
-          <p>Spending is shifting from things to experiences. A premium cinema is the anchor experience of any modern
-            development.</p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">III</div>
-          <h4>OTT Raised the Bar</h4>
-          <p>Streaming didn't kill cinema — it killed average cinema. Demand has concentrated into premium,
-            hospitality-led venues.</p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">IV</div>
-          <h4>F&amp;B Is Half the Story</h4>
-          <p>Gourmet cafés, four-course meals and in-seat dining turn every ticket into a far larger spend per guest.
-          </p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">V</div>
-          <h4>Events &amp; Celebrations</h4>
-          <p>Birthdays, corporate screenings, live sport, gaming nights — a modern cinema earns far beyond showtimes.
-          </p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">VI</div>
-          <h4>On-Screen Advertising</h4>
-          <p>A captive, premium audience makes every screen a media asset that local and national brands pay to reach.
-          </p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">VII</div>
-          <h4>Private Screenings</h4>
-          <p>Whole-auditorium bookings have become one of the fastest-growing luxury entertainment products in India.
-          </p>
-        </div>
-        <div class="wave-card">
-          <div class="glyph">VIII</div>
-          <h4>Destination Entertainment</h4>
-          <p>In Tier-2 and Tier-3 India, a premium cinema isn't one option among many. It becomes <em>the</em> place to
-            be.</p>
-        </div>
-      </div>
-    </section>
-    <!-- ================= WHY CINEMARK ================= -->
-    <section id="why">
-      <div class="section-head reveal">
-        <div class="eyebrow">Why Cinemark</div>
-        <h2 class="h-lg">Not a brand licence. <em>An end-to-end partner.</em></h2>
-        <p class="lede">We have designed, built and operated our own cinemas for a decade. Every discipline below is
-          delivered by the same teams that run our screens — now working on yours.</p>
-        <div class="gold-strip">With FOFO — You Own It, You Run It, You Earn It</div>
-      </div>
-      <div class="pillars stagger">
-        <div class="pillar"><b>Luxury Experience Design</b><span>Boutique interiors, recliners &amp; sofas only,
-            hospitality-grade guest journeys.</span></div>
-        <div class="pillar"><b>Architecture &amp; Build</b><span>Layouts, acoustics, sight-lines and fit-out managed by
-            our in-house cinema build team.</span></div>
-        <div class="pillar"><b>Technology &amp; Projection</b><span>Projection, immersive sound, POS, CRM and
-            BMS-integrated ticketing — specified, sourced and installed for you.</span></div>
-        <div class="pillar"><b>Gourmet F&amp;B Program</b><span>FSSAI-certified café concepts, menus and combos — with
-            partners like HCCB (Coca-Cola) &amp; Shree Krishna Foods.</span></div>
-        <div class="pillar"><b>Operations Playbook</b><span>SOPs for every shift, every counter, every guest moment —
-            battle-tested from Tier-3 Ambajogai to Tier-1 Pune.</span></div>
-        <div class="pillar"><b>Training Academy</b><span>Phase I HQ training and Phase II on-site launch — your team
-            ready before your doors open.</span></div>
-        <div class="pillar"><b>Marketing &amp; Launch</b><span>Brand launch, local marketing calendars and the Cinemark
-            app &amp; membership ecosystem.</span></div>
-        <div class="pillar"><b>Access Cinemark App</b><span>You will get access to the Cinemark App which will help you in increasing your business.</span></div>
-        <div class="pillar"><b>Business Consulting</b><span>Feasibility, licensing guidance and project planning from a
-            team that has built across every tier.</span></div>
-        <div class="pillar"><b>Centralized Supply Chain</b><span>F&amp;B ingredients, branded packaging and core
-            supplies sourced centrally — better rates, consistent quality.</span></div>
-        <div class="pillar"><b>Monthly Co-Operational Working</b><span>Content, audits, training, stock alerts and menu
-            launches — an active monthly partnership. See below.</span></div>
-        <div class="pillar"><b>15-Year Partnership</b><span>A long-term agreement horizon to recover, grow and compound
-            — with a brand that grows with you.</span></div>
-      </div>
-    </section>
+
     <!-- ================= FORMATS ================= -->
     <section id="formats"
       style="background:var(--noir-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
@@ -9980,6 +10263,9 @@
           if (typeof resizeCanvas === 'function') resizeCanvas();
           if (typeof updateScrollAnimation === 'function') updateScrollAnimation();
         });
+      } else {
+        const jVid = document.getElementById('journeyVideo');
+        if (jVid) jVid.pause();
       }
 
       const target = document.getElementById('page-' + page) || document.getElementById('page-home');
@@ -10989,8 +11275,43 @@
     const yrEl = document.getElementById('yr');
     if (yrEl) yrEl.textContent = new Date().getFullYear();
 
+    /* ---------- JOURNEY MAP VIDEO ---------- */
+    let currentJourneyStep = 0;
+
+    function initJourneyMap() {
+      const video = document.getElementById('journeyVideo');
+      const section = document.getElementById('journeyMapSection');
+      if (!video || !section) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      }, { threshold: 0.25 });
+
+      observer.observe(section);
+    }
+
+    function selectJourneyNode(idx, scrollCard = true) {
+      currentJourneyStep = idx;
+
+      const cards = document.querySelectorAll('.cinema-journey-card');
+      cards.forEach((card, i) => {
+        const isTarget = i === idx;
+        card.classList.toggle('active', isTarget);
+        if (isTarget && scrollCard) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    }
+
     // Initialize page on load
     window.addEventListener('DOMContentLoaded', () => {
+      initJourneyMap();
       const hash = window.location.hash.replace('#', '');
       if (hash) {
         go(hash);
