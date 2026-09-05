@@ -2144,14 +2144,36 @@
         width: 100% !important;
       }
 
-      /* General Button Restyling */
-      button,
-      .btn-ghost,
-      .btn-gold,
-      .btn-primary {
+            /* Target specific CTAs and form buttons to be full width on mobile */
+      .hero-ctas button,
+      .hero-ctas a,
+      .aurelia-form button,
+      .form-actions button,
+      .form-card button,
+      .modal-box button[type="submit"],
+      .btn-primary,
+      .btn-gold:not(.pin):not(.play-btn):not(.q-opt):not(.amn) {
         width: 100% !important;
         text-align: center !important;
         justify-content: center !important;
+      }
+
+      .pin {
+        width: auto !important;
+        position: absolute !important;
+      }
+
+      .play-btn {
+        width: 64px !important;
+        height: 64px !important;
+      }
+
+      .amn {
+        width: auto !important;
+      }
+
+      .q-opt, .q-back, .q-restart {
+        width: auto !important;
       }
     }
 
