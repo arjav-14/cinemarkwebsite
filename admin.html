@@ -266,11 +266,26 @@
     }
 
     .sidebar-header {
-      padding: 24px 20px;
+      padding: 16px 18px;
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       gap: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .brand-logo-img {
+      height: 42px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(214, 181, 83, 0.35));
+      flex-shrink: 0;
+    }
+
+    .brand-text-block {
+      overflow: hidden;
     }
 
     .brand-icon {
@@ -917,22 +932,66 @@
       color: var(--danger);
     }
 
+    .mobile-toggle-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line-strong);
+      color: var(--gold);
+      font-size: 1.25rem;
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mobile-toggle-btn:hover {
+      background: rgba(214, 181, 83, 0.15);
+      border-color: var(--gold);
+    }
+
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 180;
+    }
+
+    #sidebar-overlay.open {
+      display: block;
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
-      .sidebar {
-        width: 70px;
+      .mobile-toggle-btn {
+        display: flex;
       }
-      .brand-title, .brand-subtitle, .nav-label, .nav-item span, .admin-email-text {
-        display: none;
+      .sidebar {
+        width: 270px;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 15px 0 35px rgba(0, 0, 0, 0.9);
+        z-index: 200;
+      }
+      .sidebar.open {
+        transform: translateX(0);
       }
       .main-wrapper {
-        margin-left: 70px;
+        margin-left: 0 !important;
+        width: 100%;
       }
       .topbar {
         padding: 0 16px;
       }
+      .topbar-title {
+        font-size: 1.05rem;
+      }
       .content-body {
-        padding: 20px 16px;
+        padding: 20px 14px;
       }
     }
   </style>
@@ -972,12 +1031,15 @@
        2. APP SHELL (AUTHENTICATED)
        ========================================= -->
   <div id="admin-app" style="display: none;">
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-overlay" onclick="toggleAdminSidebar(false)"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="sidebar-header" style="padding: 16px 18px; display: flex; align-items: center; gap: 12px;">
-        <img src="https://res.cloudinary.com/mibjryxu/image/upload/a_90/v1784833491/cinemark_assets/media__1784833326110.png" alt="Cinemark Logo" style="height: 48px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(214,181,83,0.35));">
-        <div>
-          <div class="brand-title" style="letter-spacing: 0.06em; font-size: 1.05rem;">CINEMARK</div>
+      <div class="sidebar-header">
+        <img src="https://res.cloudinary.com/mibjryxu/image/upload/a_90/v1784833491/cinemark_assets/media__1784833326110.png" alt="Cinemark Logo" class="brand-logo-img">
+        <div class="brand-text-block">
+          <div class="brand-title">CINEMARK</div>
           <div class="brand-subtitle">Control Center</div>
         </div>
       </div>
@@ -1035,7 +1097,12 @@
     <!-- Main Content Area -->
     <div class="main-wrapper">
       <header class="topbar">
-        <h2 class="topbar-title" id="page-heading">Dashboard</h2>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button id="sidebar-toggle-btn" class="mobile-toggle-btn" onclick="toggleAdminSidebar()" aria-label="Toggle Navigation">
+            <span>☰</span>
+          </button>
+          <h2 class="topbar-title" id="page-heading">Dashboard</h2>
+        </div>
         <div class="topbar-actions">
           <a href="/" target="_blank" class="btn-outline">
             <span>Live Site</span> ↗
@@ -1738,10 +1805,26 @@
       showToast('Logged out successfully');
     }
 
+    // Toggle mobile sidebar drawer
+    function toggleAdminSidebar(forceState) {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (!sidebar || !overlay) return;
+      const isOpen = sidebar.classList.contains('open');
+      const targetState = forceState !== undefined ? forceState : !isOpen;
+
+      sidebar.classList.toggle('open', targetState);
+      overlay.classList.toggle('open', targetState);
+    }
+
     // =========================================
     // VIEW SWITCHING
     // =========================================
     function switchView(viewName) {
+      // Auto-close sidebar on mobile after navigating
+      if (window.innerWidth <= 900) {
+        toggleAdminSidebar(false);
+      }
       currentView = viewName;
 
       // Update Nav
