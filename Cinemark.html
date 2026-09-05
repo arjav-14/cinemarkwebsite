@@ -9880,130 +9880,17 @@
     </div>
   </footer>
 
-  <!-- ============ ADMIN PAGE ============ -->
+  <!-- ============ ADMIN PORTAL REDIRECT ============ -->
   <div class="page" id="page-admin">
-    <section class="block-tight">
-      <div class="section-head reveal in">
-        <div class="eyebrow2">ADMINISTRATION</div>
-        <h2 class="page-title">Manage <em>Content.</em></h2>
-      </div>
-
-      <!-- Login Section -->
-      <div id="admin-login-section"
-        style="max-width: 400px; margin: 0 auto; padding: 40px; background: var(--ink2); border: 1px solid var(--line);">
-        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 20px;">Admin Login</h3>
-        <form class="aurelia-form" id="adminLoginForm">
-          <div><label>Email</label><input type="email" id="adminEmail" required></div>
-          <div style="margin-top: 15px;"><label>Password</label><input type="password" id="adminPassword" required>
-          </div>
-          <button class="btn-primary" type="submit"
-            style="margin-top: 25px; width: 100%; justify-content: center;">Login →</button>
-          <div class="form-success" id="loginError"
-            style="border-color: var(--velvet); color: var(--velvet); background: rgba(214, 181, 83,0.12); display:none; margin-top:15px;">
-          </div>
-        </form>
-      </div>
-
-      <!-- Dashboard Section -->
-      <div id="admin-dashboard-section" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-          <h3 style="font-family: 'Fraunces', serif;">Content Management System</h3>
-          <button class="btn-ghost" id="adminLogoutBtn" onclick="logout()" style="padding: 10px 20px;">Logout</button>
-        </div>
-
-        <div
-          style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 15px;">
-          <button class="btn-ghost active" onclick="switchAdminTab('gallery')" id="tab-gallery">Gallery</button>
-          <button class="btn-ghost" onclick="switchAdminTab('nav')" id="tab-nav">Navigation</button>
-          <button class="btn-ghost" onclick="switchAdminTab('content')" id="tab-content">Site Content</button>
-        </div>
-
-        <!-- Gallery CMS -->
-        <div id="cms-gallery" class="cms-panel" style="display: block;">
-          <div style="background: var(--ink2); border: 1px solid var(--line); padding: 30px; margin-bottom: 40px;">
-            <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Upload New Photo</h4>
-            <form class="aurelia-form" id="uploadPhotoForm">
-              <div class="form-row">
-                <div>
-                  <label>Image File</label>
-                  <input type="file" id="photoFile" accept="image/*" required style="padding: 9px; cursor: pointer;">
-                </div>
-                <div>
-                  <label>Caption</label>
-                  <input type="text" id="photoCaption" required placeholder="A brief description...">
-                </div>
-              </div>
-              <div style="margin-top: 15px;">
-                <label>Section</label>
-                <select id="photoSection" required
-                  style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); border-radius: 4px;">
-                  <option value="Exterior">Exterior</option>
-                  <option value="Lobby">Lobby</option>
-                  <option value="Auditorium">Auditorium</option>
-                  <option value="Food & Beverage">Food & Beverage</option>
-                  <option value="VIP Lounge">VIP Lounge</option>
-                </select>
-              </div>
-              <button class="btn-primary" type="submit" id="uploadBtn" style="margin-top: 20px;">Upload to Gallery
-                →</button>
-              <div class="form-success" id="uploadStatus" style="display:none; margin-top: 15px;"></div>
-            </form>
-          </div>
-          <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Current Gallery Photos</h4>
-          <div class="gallery-grid" id="adminGalleryList"></div>
-        </div>
-
-        <!-- Navigation CMS -->
-        <div id="cms-nav" class="cms-panel" style="display: none;">
-          <div style="background: var(--ink2); border: 1px solid var(--line); padding: 30px; margin-bottom: 40px;">
-            <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Add Nav Link</h4>
-            <form class="aurelia-form" id="addNavForm">
-              <div class="form-row">
-                <div><label>Link Title</label><input type="text" id="navTitle" required placeholder="e.g. Home"></div>
-                <div><label>Target Page ID</label><input type="text" id="navTarget" required placeholder="e.g. home">
-                </div>
-              </div>
-              <div class="form-row" style="margin-top:15px;">
-                <div><label>Order</label><input type="number" id="navOrder" required value="1"></div>
-                <div><label>Location</label>
-                  <select id="navLocation"
-                    style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); border-radius: 4px;">
-                    <option value="main">Main Bar</option>
-                    <option value="more">"More" Dropdown</option>
-                  </select>
-                </div>
-              </div>
-              <button class="btn-primary" type="submit" id="addNavBtn" style="margin-top: 20px;">Add Link →</button>
-              <div class="form-success" id="navStatus" style="display:none; margin-top: 15px;"></div>
-            </form>
-          </div>
-          <h4 style="margin-bottom: 20px; font-family: 'Fraunces', serif;">Current Links</h4>
-          <div id="adminNavList" style="display:flex; flex-direction:column; gap:10px;"></div>
-        </div>
-
-        <!-- Content CMS -->
-        <div id="cms-content" class="cms-panel" style="display: none;">
-          <div style="background: var(--ink2); border: 1px solid var(--line); padding: 30px; margin-bottom: 40px;">
-            <form class="aurelia-form" id="editContentForm">
-              <div style="margin-bottom:15px;">
-                <label>Hero Title (HTML allowed)</label>
-                <textarea id="contentHeroTitle" rows="3"
-                  style="width:100%; padding:10px; background:rgba(255,255,255,0.05); color:white; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;"></textarea>
-              </div>
-              <div style="margin-bottom:15px;">
-                <label>About Us Paragraph</label>
-                <textarea id="contentAbout" rows="5"
-                  style="width:100%; padding:10px; background:rgba(255,255,255,0.05); color:white; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;"></textarea>
-              </div>
-              <button class="btn-primary" type="submit" id="saveContentBtn" style="margin-top: 20px;">Save Content
-                →</button>
-              <div class="form-success" id="contentStatus" style="display:none; margin-top: 15px;"></div>
-            </form>
-          </div>
-        </div>
-
-      </div>
-
+    <section class="block-tight" style="text-align: center; padding: 120px 20px;">
+      <div class="eyebrow2">CINEMARK ADMINISTRATION</div>
+      <h2 class="page-title" style="margin: 20px 0;">Control <em>Center.</em></h2>
+      <p style="color: var(--cream-dim); max-width: 520px; margin: 0 auto 30px; line-height: 1.6;">
+        The Cinemark admin control center is hosted on a secure standalone portal. Manage website images, hero carousel, news, locations, and franchise inquiries directly.
+      </p>
+      <a href="/admin" class="btn-primary" style="display: inline-flex; width: auto; text-decoration: none; padding: 14px 28px;">
+        Open Admin Portal →
+      </a>
     </section>
   </div>
 
@@ -10279,13 +10166,10 @@
       // Update hash to persist page state
       window.location.hash = page;
 
-      // Automatically handle admin auth view
+      // Admin portal navigation
       if (page === 'admin') {
-        if (localStorage.getItem('cinemark_admin_token')) {
-          showDashboard();
-        } else {
-          showLogin();
-        }
+        window.location.href = '/admin';
+        return;
       }
     }
 
@@ -10348,14 +10232,47 @@
   </form>`);
     }
 
-    /* ---------------- FORMS ---------------- */
+    /* ---------------- FORMS (CONNECTED TO BACKEND ENQUIRIES) ---------------- */
     function submitForm(e, successId) {
       e.preventDefault();
-      if (successId) { document.getElementById(successId).classList.add('show'); }
-      else {
-        const btn = e.target.querySelector('button');
+      try {
+        const formEl = e.target;
+        const inputs = formEl.querySelectorAll('input, textarea, select');
+        let details = {};
+        inputs.forEach(inp => {
+          if (inp.type !== 'submit' && inp.value) {
+            details[inp.name || inp.placeholder || inp.type] = inp.value;
+          }
+        });
+        const nameVal = details['name'] || details['Name'] || details['Full Name'] || (formEl.querySelector('input[type="text"]') ? formEl.querySelector('input[type="text"]').value : 'Visitor');
+        const emailVal = details['email'] || details['Email'] || (formEl.querySelector('input[type="email"]') ? formEl.querySelector('input[type="email"]').value : '');
+        const phoneVal = details['phone'] || details['Phone'] || (formEl.querySelector('input[type="tel"]') ? formEl.querySelector('input[type="tel"]').value : '');
+
+        fetch('/api/enquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: successId ? successId.replace('Success', '') : 'contact',
+            name: nameVal,
+            email: emailVal,
+            phone: phoneVal,
+            message: JSON.stringify(details)
+          })
+        }).catch(() => {});
+      } catch (err) {}
+
+      if (successId) {
+        const el = document.getElementById(successId);
+        if (el) {
+          el.classList.add('show');
+          el.style.display = 'block';
+        }
+      } else {
         const succ = e.target.querySelector('.form-success');
-        if (succ) succ.classList.add('show');
+        if (succ) {
+          succ.classList.add('show');
+          succ.style.display = 'block';
+        }
       }
       return false;
     }
@@ -10489,78 +10406,24 @@
   </script>
 
   <script>
-    // --- API Configuration ---
-    // For production, use relative URL so it dynamically uses the Render domain
+    // --- Public Website Dynamic API Synchronization ---
     const API_URL = '/api';
 
-    // --- AUTHENTICATION ---
-    const loginView = document.getElementById('admin-login-section');
-    const dashboardView = document.getElementById('admin-dashboard-section');
-    const loginForm = document.getElementById('adminLoginForm');
-
-    function showLogin() {
-      loginView.style.display = 'block';
-      dashboardView.style.display = 'none';
-    }
-
-    function showDashboard() {
-      loginView.style.display = 'none';
-      dashboardView.style.display = 'block';
-      loadAdminGallery();
-      loadAdminNavLinks();
-      loadAdminContent();
-    }
-
-    function getAdminPassword() {
-      return localStorage.getItem('cinemark_admin_token') || '';
-    }
-
-    if (loginForm) {
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('adminEmail').value;
-        const password = document.getElementById('adminPassword').value;
-        try {
-          const res = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-          });
-          const data = await res.json();
-          if (data.success) {
-            localStorage.setItem('cinemark_admin_token', password);
-            showDashboard();
-          } else {
-            alert('Invalid Password');
-          }
-        } catch (err) {
-          alert('Login failed: Server offline or error.');
-        }
-      });
-    }
-
-    window.closeAdmin = function () {
-      go('home');
+    // Navigation and admin redirect
+    window.openAdmin = function (e) {
+      if (e) e.preventDefault();
+      window.location.href = '/admin';
     };
 
-    window.logout = async function () {
-      localStorage.removeItem('cinemark_admin_token');
-      showLogin();
-    };
-
-    // Auto-login check on page load if token exists
+    // Auto-fetch dynamic database content for public visitors on page load
     window.addEventListener('DOMContentLoaded', () => {
       fetchCMSNavbar();
       fetchCMSContent();
       fetchPublicGallery();
+      fetchPublicNews();
     });
 
-    window.openAdmin = function (e) {
-      if (e) e.preventDefault();
-      go('admin');
-    };
-
-    // --- GALLERY CMS ---
+    // --- DYNAMIC GALLERY SYNC ---
     async function fetchPublicGallery() {
       try {
         const res = await fetch(`${API_URL}/gallery`);
@@ -10579,134 +10442,16 @@
           }
         }
       } catch (e) {
-        console.log('Error fetching gallery');
+        console.log('Using standard gallery photos');
       }
     }
 
-    async function loadAdminGallery() {
-      const adminList = document.getElementById('adminPhotoList');
-      if (!adminList) return;
-      adminList.innerHTML = '<p>Loading photos...</p>';
-
-      try {
-        const res = await fetch(`${API_URL}/gallery`);
-        const photos = await res.json();
-
-        if (photos.length === 0) {
-          adminList.innerHTML = '<p style="color:var(--cream-dim);">No photos found.</p>';
-          return;
-        }
-
-        let html = '';
-        photos.forEach(photo => {
-          html += `
-            <div style="border: 1px solid var(--line); background: var(--ink3); padding: 12px; position:relative;">
-              <img src="${photo.url}" alt="${photo.title}" style="width:100%; height:160px; object-fit:cover; margin-bottom: 12px; border: 1px solid var(--line);">
-              <div style="font-size: 0.85rem; margin-bottom: 12px; color: var(--cream);">${photo.title || ''}</div>
-              <button class="btn-ghost" style="padding: 8px 12px; font-size: 0.75rem; width: 100%; color: var(--velvet); border-color: var(--velvet);" onclick="deleteGalleryPhoto(${photo.id})">Delete</button>
-            </div>
-          `;
-        });
-        adminList.innerHTML = html;
-      } catch (e) {
-        adminList.innerHTML = '<p style="color:var(--velvet);">Error loading photos.</p>';
-      }
-    }
-
-    window.deleteGalleryPhoto = async function (id) {
-      if (!confirm('Delete this photo?')) return;
-      try {
-        await fetch(`${API_URL}/gallery/${id}`, {
-          method: 'DELETE',
-          headers: { 'x-admin-password': getAdminPassword() }
-        });
-        loadAdminGallery();
-        fetchPublicGallery();
-      } catch (e) {
-        alert('Error deleting photo');
-      }
-    }
-
-    const uploadForm = document.getElementById('uploadPhotoForm');
-    if (uploadForm) {
-      uploadForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const fileInput = document.getElementById('photoFile');
-        const cap = document.getElementById('photoCaption').value;
-        const section = document.getElementById('photoSection').value;
-        const submitBtn = uploadForm.querySelector('button[type="submit"]');
-
-        if (!fileInput.files.length) return alert("Select a file");
-
-        const file = fileInput.files[0];
-        const formData = new FormData();
-
-        // compress before upload
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-
-        const objectUrl = URL.createObjectURL(file);
-
-        submitBtn.textContent = 'Compressing...';
-        submitBtn.disabled = true;
-
-        img.onload = async () => {
-          URL.revokeObjectURL(objectUrl);
-
-          let width = img.width;
-          let height = img.height;
-          const MAX = 1200;
-
-          if (width > height) {
-            if (width > MAX) { height *= MAX / width; width = MAX; }
-          } else {
-            if (height > MAX) { width *= MAX / height; height = MAX; }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(async (blob) => {
-            formData.append('image', blob, file.name);
-            formData.append('title', cap);
-            formData.append('section', section);
-
-            submitBtn.textContent = 'Uploading...';
-
-            try {
-              const res = await fetch(`${API_URL}/gallery`, {
-                method: 'POST',
-                headers: { 'x-admin-password': getAdminPassword() },
-                body: formData
-              });
-              if (res.ok) {
-                uploadForm.reset();
-                loadAdminGallery();
-                fetchPublicGallery();
-                alert('Upload successful!');
-              } else {
-                alert('Upload failed');
-              }
-            } catch (e) {
-              alert('Error uploading');
-            }
-            submitBtn.textContent = 'Upload Photo';
-            submitBtn.disabled = false;
-          }, 'image/jpeg', 0.65);
-        };
-        img.src = objectUrl;
-      });
-    }
-
-    // --- NAVIGATION CMS ---
+    // --- DYNAMIC NAVBAR SYNC ---
     async function fetchCMSNavbar() {
       try {
         const res = await fetch(`${API_URL}/navbar`);
         const links = await res.json();
-        if (links.length === 0) return;
+        if (!links || links.length === 0) return;
 
         let mainLinks = '';
         let moreLinks = '';
@@ -10723,7 +10468,7 @@
         });
 
         const navContainer = document.getElementById('navLinks');
-        if (navContainer) {
+        if (navContainer && (mainLinks !== '' || moreLinks !== '')) {
           let finalHTML = mainLinks;
           if (moreLinks !== '') {
             finalHTML += `
@@ -10736,82 +10481,11 @@
           navContainer.innerHTML = finalHTML;
         }
       } catch (e) {
-        console.log("Could not fetch CMS Navbar.");
+        console.log("Using default navbar");
       }
     }
 
-    async function loadAdminNavLinks() {
-      const adminNavList = document.getElementById('adminNavList');
-      if (!adminNavList) return;
-      adminNavList.innerHTML = '<p>Loading...</p>';
-      try {
-        const res = await fetch(`${API_URL}/navbar`);
-        const links = await res.json();
-
-        if (links.length === 0) {
-          adminNavList.innerHTML = '<p style="color:var(--cream-dim);">No custom links found. Hardcoded links are showing.</p>';
-          return;
-        }
-        let html = '';
-        links.forEach(data => {
-          html += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--ink3); padding:10px; border:1px solid var(--line);">
-              <div>
-                <strong>${data.title}</strong> &rarr; '${data.href}' 
-                <span style="color:var(--cream-dim); font-size:0.8em; margin-left:10px;">(Order: ${data.sort_order}, More: ${data.is_more})</span>
-              </div>
-              <button class="btn-ghost" style="padding:4px 8px; font-size:0.8em; color:var(--velvet); border-color:var(--velvet);" onclick="deleteNavLink(${data.id})">Delete</button>
-            </div>
-          `;
-        });
-        adminNavList.innerHTML = html;
-      } catch (e) {
-        adminNavList.innerHTML = '<p style="color:var(--velvet);">Error loading nav links.</p>';
-      }
-    }
-
-    const addNavForm = document.getElementById('addNavForm');
-    if (addNavForm) {
-      addNavForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = document.getElementById('navTitle').value;
-        const href = document.getElementById('navTarget').value;
-        const sortOrder = parseInt(document.getElementById('navOrder').value) || 0;
-        const isMore = document.getElementById('navLocation').value === 'more';
-
-        try {
-          await fetch(`${API_URL}/navbar`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-admin-password': getAdminPassword()
-            },
-            body: JSON.stringify({ title, href, sortOrder, isMore })
-          });
-          addNavForm.reset();
-          loadAdminNavLinks();
-          fetchCMSNavbar();
-        } catch (e) {
-          alert("Error adding link");
-        }
-      });
-    }
-
-    window.deleteNavLink = async function (id) {
-      if (!confirm("Delete this navigation link?")) return;
-      try {
-        await fetch(`${API_URL}/navbar/${id}`, {
-          method: 'DELETE',
-          headers: { 'x-admin-password': getAdminPassword() }
-        });
-        loadAdminNavLinks();
-        fetchCMSNavbar();
-      } catch (e) {
-        alert("Error deleting link");
-      }
-    };
-
-    // --- SITE CONTENT CMS ---
+    // --- DYNAMIC CMS CONTENT SYNC ---
     async function fetchCMSContent() {
       try {
         const res = await fetch(`${API_URL}/content`);
@@ -10822,64 +10496,36 @@
           if (el) el.innerHTML = c.html_content;
         });
       } catch (e) {
-        console.log("Could not fetch CMS Content.");
+        console.log("Using default site copy");
       }
     }
 
-    async function loadAdminContent() {
+    // --- DYNAMIC NEWS SYNC ---
+    async function fetchPublicNews() {
       try {
-        const res = await fetch(`${API_URL}/content`);
-        const content = await res.json();
+        const res = await fetch(`${API_URL}/news`);
+        const newsItems = await res.json();
+        if (!newsItems || newsItems.length === 0) return;
 
-        content.forEach(c => {
-          if (c.id === 'cms-hero_title') document.getElementById('contentHeroTitle').value = c.html_content;
-          if (c.id === 'cms-about_paragraph') document.getElementById('contentAbout').value = c.html_content;
-        });
+        const container = document.getElementById('newsListContainer') || document.querySelector('#page-news > section > div:last-of-type');
+        if (container) {
+          container.innerHTML = newsItems.map(n => `
+            <div class="news-item">
+              <div class="news-date">${n.date_label || 'UPDATE'}</div>
+              <div>
+                <h4>${n.title}</h4>
+                <p>${n.body}</p>
+              </div>
+            </div>
+          `).join('');
+        }
       } catch (e) {
-        console.log("Error loading admin content", e);
+        console.log("Using default news items");
       }
     }
+  </script>
 
-    const editContentForm = document.getElementById('editContentForm');
-    if (editContentForm) {
-      editContentForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const heroTitle = document.getElementById('contentHeroTitle').value;
-        const aboutParagraph = document.getElementById('contentAbout').value;
-        const status = document.getElementById('contentStatus');
-
-        try {
-          // update hero
-          await fetch(`${API_URL}/content`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-admin-password': getAdminPassword() },
-            body: JSON.stringify({ id: 'cms-hero_title', html_content: heroTitle })
-          });
-          // update about
-          await fetch(`${API_URL}/content`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-admin-password': getAdminPassword() },
-            body: JSON.stringify({ id: 'cms-about_paragraph', html_content: aboutParagraph })
-          });
-
-          status.textContent = "✔ Content saved!";
-          status.style.display = 'block';
-          status.style.borderColor = 'var(--green)';
-          status.style.color = 'var(--green)';
-          status.style.background = 'rgba(76, 175, 125, 0.12)';
-
-          fetchCMSContent();
-        } catch (error) {
-          status.textContent = "Error saving";
-          status.style.borderColor = 'var(--velvet)';
-          status.style.color = 'var(--velvet)';
-          status.style.background = 'rgba(214, 181, 83,0.12)';
-          status.style.display = 'block';
-        }
-      });
-    }
-
+  <script>
     /* ================= FRANCHISE LOGIC ================= */
     /* ---------- Hero dust ---------- */
     /* ---------- Hero dust ---------- */
@@ -11231,16 +10877,45 @@
       });
     }
 
-    /* ---------- Form (Netlify AJAX) ---------- */
+    /* ---------- Form Submissions (Connected to Production Database) ---------- */
     const form = document.getElementById('enquiryForm');
     if (form) {
-      form.addEventListener('submit', e => {
+      form.addEventListener('submit', async e => {
         e.preventDefault();
         const btn = form.querySelector('button[type=submit]');
+        const originalText = btn.textContent;
         btn.disabled = true; btn.textContent = 'Sending…';
-        fetch('/', { method: 'POST', body: new FormData(form) })
-          .then(() => { document.getElementById('formOk').classList.add('show'); form.querySelectorAll('input:not([type=hidden]),select,textarea').forEach(el => el.value = ''); btn.textContent = 'Application Sent ✦'; })
-          .catch(() => { btn.disabled = false; btn.textContent = 'Apply Now'; alert('Something went wrong — please try WhatsApp or call us directly.'); });
+
+        const payload = {
+          type: 'franchise',
+          name: (document.getElementById('f-name') ? document.getElementById('f-name').value : '').trim(),
+          phone: (document.getElementById('f-phone') ? document.getElementById('f-phone').value : '').trim(),
+          email: (document.getElementById('f-email') ? document.getElementById('f-email').value : '').trim(),
+          city: (document.getElementById('f-city') ? document.getElementById('f-city').value : '').trim(),
+          state: (document.getElementById('f-state') ? document.getElementById('f-state').value : '').trim(),
+          business: (document.getElementById('f-biz') ? document.getElementById('f-biz').value : '').trim(),
+          property: (document.getElementById('f-prop') ? document.getElementById('f-prop').value : '').trim(),
+          message: (document.getElementById('f-msg') ? document.getElementById('f-msg').value : '').trim()
+        };
+
+        try {
+          const res = await fetch('/api/enquiries', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            document.getElementById('formOk').classList.add('show');
+            form.querySelectorAll('input:not([type=hidden]),select,textarea').forEach(el => el.value = '');
+            btn.textContent = 'Application Sent ✦';
+          } else {
+            throw new Error('Server submission error');
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = originalText;
+          alert('Something went wrong — please try again or reach out on WhatsApp at +91 93251 66555.');
+        }
       });
     }
 
@@ -11249,26 +10924,54 @@
     if (bar) {
       addEventListener('scroll', () => {
         const past = scrollY > innerHeight * 0.9;
-        const atForm = document.getElementById('apply').getBoundingClientRect().top < innerHeight * 0.5;
+        const applyEl = document.getElementById('apply');
+        const atForm = applyEl && applyEl.getBoundingClientRect().top < innerHeight * 0.5;
         bar.classList.toggle('show', past && !atForm);
       }, { passive: true });
     }
 
-    /* ---------- New forms (Netlify AJAX) ---------- */
-    const BROCHURE_URL = ''; /* TODO: paste hosted franchise-kit PDF URL to auto-download on submit */
-    [['callForm', 'callOk'], ['brochureForm', 'brochureOk']].forEach(([fid, okid]) => {
+    /* ---------- Discovery Call & Brochure Kit Forms ---------- */
+    const BROCHURE_URL = '';
+    [['callForm', 'callOk', 'discovery_call'], ['brochureForm', 'brochureOk', 'brochure_kit']].forEach(([fid, okid, formType]) => {
       const f = document.getElementById(fid); if (!f) return;
-      f.addEventListener('submit', e => {
+      f.addEventListener('submit', async e => {
         e.preventDefault();
-        const btn = f.querySelector('button[type=submit]'); const label = btn.textContent;
+        const btn = f.querySelector('button[type=submit]');
+        const label = btn.textContent;
         btn.disabled = true; btn.textContent = 'Sending…';
-        fetch('/', { method: 'POST', body: new FormData(f) })
-          .then(() => {
+
+        const nameInput = f.querySelector('input[name="name"]');
+        const phoneInput = f.querySelector('input[name="phone"]');
+        const emailInput = f.querySelector('input[name="email"]');
+        const cityInput = f.querySelector('input[name="city"]');
+
+        const payload = {
+          type: formType,
+          name: nameInput ? nameInput.value.trim() : 'Website Visitor',
+          phone: phoneInput ? phoneInput.value.trim() : '',
+          email: emailInput ? emailInput.value.trim() : '',
+          city: cityInput ? cityInput.value.trim() : '',
+          message: `Submission via ${formType}`
+        };
+
+        try {
+          const res = await fetch('/api/enquiries', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
             document.getElementById(okid).classList.add('show');
             btn.textContent = 'Sent ✦';
             if (fid === 'brochureForm' && BROCHURE_URL) window.open(BROCHURE_URL, '_blank');
-          })
-          .catch(() => { btn.disabled = false; btn.textContent = label; alert('Something went wrong — please WhatsApp us on +91 93251 66555.'); });
+          } else {
+            throw new Error('Failed');
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = label;
+          alert('Something went wrong — please WhatsApp us on +91 93251 66555.');
+        }
       });
     });
 

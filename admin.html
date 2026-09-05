@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinemark Administration — Portal CMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,400&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070707;
+      --bg-surface: #0e0e0e;
+      --bg-card: #141414;
+      --bg-card-hover: #1a1a1a;
+      --gold: #D6B553;
+      --gold-light: #EED9A0;
+      --gold-dim: rgba(214, 181, 83, 0.15);
+      --gold-border: rgba(214, 181, 83, 0.28);
+      --cream: #F3EAD9;
+      --cream-dim: #9E9587;
+      --line: rgba(243, 234, 217, 0.08);
+      --line-strong: rgba(214, 181, 83, 0.2);
+      --green: #38bdf8;
+      --emerald: #34d399;
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--cream);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(214, 181, 83, 0.3);
+      border-radius: 3px;
+    }
+
+    /* =========================================
+       LOGIN VIEW
+       ========================================= */
+    #login-view {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #17140e 0%, #060606 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-border);
+      border-radius: 12px;
+      padding: 42px 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 40px rgba(214, 181, 83, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .login-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-brand .brand-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .login-brand h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--cream);
+    }
+
+    .login-brand h1 span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .login-brand p {
+      font-size: 0.85rem;
+      color: var(--cream-dim);
+      margin-top: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #141414;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: #181818;
+      box-shadow: 0 0 12px rgba(214, 181, 83, 0.2);
+    }
+
+    select, select.form-control {
+      width: 100%;
+      background-color: #141414 !important;
+      color: var(--cream) !important;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D6B553' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 16px !important;
+      padding-right: 42px !important;
+    }
+
+    select:focus, select.form-control:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(214, 181, 83, 0.25);
+    }
+
+    select option, select.form-control option {
+      background-color: #141414 !important;
+      color: #F3EAD9 !important;
+      padding: 12px 16px;
+      font-size: 0.92rem;
+    }
+
+    select option:checked, select option:hover {
+      background-color: #262013 !important;
+      color: var(--gold) !important;
+    }
+
+    .btn-gold {
+      width: 100%;
+      background: linear-gradient(135deg, #e3c467 0%, #b89431 100%);
+      color: #0d0a04;
+      border: none;
+      border-radius: 6px;
+      padding: 14px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s;
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #ebd07a 0%, #c9a43a 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(214, 181, 83, 0.35);
+    }
+
+    .btn-gold:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-error {
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: var(--danger);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-top: 16px;
+      display: none;
+      text-align: center;
+    }
+
+    /* =========================================
+       APP SHELL & SIDEBAR
+       ========================================= */
+    #admin-app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: #090909;
+      border-right: 1px solid var(--line);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 90;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--gold), #7d5e16);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #000;
+      font-family: 'Fraunces', serif;
+    }
+
+    .brand-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .brand-subtitle {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      padding: 12px 10px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      color: var(--gold-light);
+    }
+
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .admin-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    .admin-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .admin-email-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--cream);
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: var(--danger);
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(248, 113, 113, 0.15);
+      border-color: var(--danger);
+    }
+
+    /* =========================================
+       MAIN CONTENT CONTAINER
+       ========================================= */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 64px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9, 9, 9, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .topbar-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-outline {
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--cream);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--gold);
+      color: #fff;
+    }
+
+    .content-body {
+      padding: 32px;
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .panel-view {
+      display: none;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    .panel-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================
+       DASHBOARD WIDGETS
+       ========================================= */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--gold);
+      opacity: 0.7;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-2px);
+    }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+
+    .kpi-value {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--gold);
+    }
+
+    /* System Health Box */
+    .system-health-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .health-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+    }
+
+    /* Section Card */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-card-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    /* =========================================
+       GALLERY VIEW & UPLOAD ZONE
+       ========================================= */
+    .dropzone {
+      border: 2px dashed var(--line-strong);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+      color: var(--cream-dim);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pill-btn:hover {
+      color: #fff;
+      border-color: var(--line-strong);
+    }
+
+    .pill-btn.active {
+      background: var(--gold);
+      color: #000;
+      font-weight: 600;
+      border-color: var(--gold);
+    }
+
+    .gallery-grid-admin {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .photo-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .photo-card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-2px);
+    }
+
+    .photo-img-wrap {
+      width: 100%;
+      height: 160px;
+      background: #000;
+      position: relative;
+    }
+
+    .photo-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--gold);
+      font-size: 0.68rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .photo-info {
+      padding: 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .photo-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-action-small {
+      flex: 1;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 0.74rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .btn-action-small:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .btn-action-delete {
+      color: var(--danger);
+      border-color: rgba(248, 113, 113, 0.2);
+    }
+
+    .btn-action-delete:hover {
+      background: rgba(248, 113, 113, 0.15);
+      border-color: var(--danger);
+    }
+
+    /* =========================================
+       TABLE STYLES (ENQUIRIES, LOCATIONS)
+       ========================================= */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table.admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    table.admin-table th {
+      background: #111;
+      padding: 14px 16px;
+      font-weight: 600;
+      color: var(--cream-dim);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--line);
+    }
+
+    table.admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--cream);
+    }
+
+    table.admin-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.admin-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .status-new {
+      background: rgba(214, 181, 83, 0.18);
+      color: var(--gold-light);
+      border: 1px solid var(--gold-border);
+    }
+
+    .status-in_progress, .status-in_review {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .status-contacted {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--emerald);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .status-closed {
+      background: rgba(158, 149, 135, 0.15);
+      color: var(--cream-dim);
+      border: 1px solid rgba(158, 149, 135, 0.3);
+    }
+
+    /* =========================================
+       MODALS
+       ========================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 14px;
+    }
+
+    .modal-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      color: var(--cream);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #toast.success {
+      border-color: var(--emerald);
+    }
+
+    #toast.error {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 70px;
+      }
+      .brand-title, .brand-subtitle, .nav-label, .nav-item span, .admin-email-text {
+        display: none;
+      }
+      .main-wrapper {
+        margin-left: 70px;
+      }
+      .topbar {
+        padding: 0 16px;
+      }
+      .content-body {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================
+       1. LOGIN VIEW (ADMIN ONLY)
+       ========================================= -->
+  <div id="login-view">
+    <div class="login-box">
+      <div class="login-brand">
+        <img src="https://res.cloudinary.com/mibjryxu/image/upload/a_90/v1784833491/cinemark_assets/media__1784833326110.png" alt="Cinemark Logo" style="height: 64px; width: auto; margin-bottom: 16px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(214,181,83,0.4));">
+        <div class="brand-badge">Administrative Access</div>
+        <h1>CINEMARK <span>PORTAL</span></h1>
+        <p>Enter administrator credentials to manage website images, content, and enquiries.</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Admin Email</label>
+          <input type="email" id="login-email" class="form-control" value="Cinemarkgroup@gmail.com" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Admin Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-gold" id="login-btn">
+          <span>Authenticate & Access</span> →
+        </button>
+        <div class="login-error" id="login-error-msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================
+       2. APP SHELL (AUTHENTICATED)
+       ========================================= -->
+  <div id="admin-app" style="display: none;">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header" style="padding: 16px 18px; display: flex; align-items: center; gap: 12px;">
+        <img src="https://res.cloudinary.com/mibjryxu/image/upload/a_90/v1784833491/cinemark_assets/media__1784833326110.png" alt="Cinemark Logo" style="height: 48px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(214,181,83,0.35));">
+        <div>
+          <div class="brand-title" style="letter-spacing: 0.06em; font-size: 1.05rem;">CINEMARK</div>
+          <div class="brand-subtitle">Control Center</div>
+        </div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-label">Core</div>
+        <div class="nav-item active" onclick="switchView('dashboard')">
+          <span>📊</span> <span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="switchView('enquiries')">
+          <span>📩</span> <span>Franchise Enquiries</span>
+          <span class="nav-badge" id="badge-enquiries" style="display:none;">0</span>
+        </div>
+
+        <div class="nav-label">Media & Visuals</div>
+        <div class="nav-item" onclick="switchView('gallery')">
+          <span>🖼️</span> <span>Gallery Photos</span>
+        </div>
+        <div class="nav-item" onclick="switchView('site-assets')">
+          <span>🎞️</span> <span>Hero & Photo Strip</span>
+        </div>
+
+        <div class="nav-label">Content & Operations</div>
+        <div class="nav-item" onclick="switchView('locations')">
+          <span>📍</span> <span>Cinema Locations</span>
+        </div>
+        <div class="nav-item" onclick="switchView('news')">
+          <span>📰</span> <span>News & Press</span>
+        </div>
+        <div class="nav-item" onclick="switchView('cms')">
+          <span>📝</span> <span>Site Content CMS</span>
+        </div>
+        <div class="nav-item" onclick="switchView('navbar')">
+          <span>🧭</span> <span>Navbar Links</span>
+        </div>
+
+        <div class="nav-label">System</div>
+        <div class="nav-item" onclick="switchView('settings')">
+          <span>⚙️</span> <span>Settings & Security</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="admin-pill">
+          <div class="admin-avatar">A</div>
+          <div class="admin-email-text" id="sidebar-admin-email">Admin</div>
+        </div>
+        <a href="/" target="_blank" class="btn-outline" style="justify-content: center; font-size: 0.78rem;">
+          <span>View Live Website</span> ↗
+        </a>
+        <button class="btn-logout" onclick="logoutAdmin()">Log Out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <h2 class="topbar-title" id="page-heading">Dashboard</h2>
+        <div class="topbar-actions">
+          <a href="/" target="_blank" class="btn-outline">
+            <span>Live Site</span> ↗
+          </a>
+          <button class="btn-outline" onclick="refreshCurrentView()">
+            <span>↻ Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content-body">
+
+        <!-- =========================================
+             VIEW 1: DASHBOARD
+             ========================================= -->
+        <div class="panel-view active" id="view-dashboard">
+          <div class="system-health-bar">
+            <div class="health-badge">
+              <div class="status-dot"></div>
+              <span>Database: <strong>Neon PostgreSQL Active</strong></span>
+            </div>
+            <div class="health-badge">
+              <div class="status-dot"></div>
+              <span>Media CDN: <strong>Cloudinary Connected</strong></span>
+            </div>
+            <div class="health-badge">
+              <div class="status-dot"></div>
+              <span>Auth: <strong>Production JWT Secured</strong></span>
+            </div>
+            <div class="health-badge">
+              <div class="status-dot"></div>
+              <span>Public Users: <strong>No Login Required (Frictionless)</strong></span>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card" onclick="switchView('gallery')" style="cursor: pointer;">
+              <div class="kpi-label">Gallery Photos</div>
+              <div class="kpi-value" id="kpi-gallery">-</div>
+              <div class="kpi-sub">Managed on Cloudinary</div>
+            </div>
+            <div class="kpi-card" onclick="switchView('enquiries')" style="cursor: pointer;">
+              <div class="kpi-label">Franchise Inquiries</div>
+              <div class="kpi-value" id="kpi-enquiries">-</div>
+              <div class="kpi-sub" id="kpi-new-enquiries">0 New Submissions</div>
+            </div>
+            <div class="kpi-card" onclick="switchView('locations')" style="cursor: pointer;">
+              <div class="kpi-label">Cinema Locations</div>
+              <div class="kpi-value" id="kpi-locations">-</div>
+              <div class="kpi-sub">Across India Metros</div>
+            </div>
+            <div class="kpi-card" onclick="switchView('news')" style="cursor: pointer;">
+              <div class="kpi-label">News & Updates</div>
+              <div class="kpi-value" id="kpi-news">-</div>
+              <div class="kpi-sub">Public press releases</div>
+            </div>
+          </div>
+
+          <!-- Quick Recent Inquiries -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <h3 class="section-card-title">Recent Franchise & Lead Submissions</h3>
+              <button class="btn-outline" onclick="switchView('enquiries')">View All Inquiries →</button>
+            </div>
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>City / State</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-enquiries-table">
+                  <tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">Loading inquiries...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 2: GALLERY MANAGER
+             ========================================= -->
+        <div class="panel-view" id="view-gallery">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div>
+                <h3 class="section-card-title">Upload New Photos</h3>
+                <p style="font-size: 0.85rem; color: var(--cream-dim); margin-top: 4px;">
+                  Files are automatically optimized and uploaded directly to Cloudinary CDN & saved in database.
+                </p>
+              </div>
+            </div>
+
+            <form id="gallery-upload-form">
+              <div class="dropzone" id="gallery-dropzone" onclick="document.getElementById('gallery-file-input').click()">
+                <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
+                <div style="font-weight: 500; font-size: 0.95rem; margin-bottom: 4px;">Click or drag images here to upload</div>
+                <div style="font-size: 0.78rem; color: var(--cream-dim);">Supports JPEG, PNG, WEBP (Up to 15MB each, multi-file supported)</div>
+                <input type="file" id="gallery-file-input" multiple accept="image/*" style="display: none;">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                  <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Caption / Title</label>
+                  <input type="text" id="gallery-caption" class="form-control" placeholder="e.g. VIP Screening Lounge">
+                </div>
+                <div>
+                  <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Section Tag</label>
+                  <select id="gallery-section" class="form-control">
+                    <option value="Auditorium">Auditorium</option>
+                    <option value="Lobby">Lobby</option>
+                    <option value="Exterior">Exterior</option>
+                    <option value="Food & Beverage">Food & Beverage</option>
+                    <option value="VIP Lounge">VIP Lounge</option>
+                    <option value="All">All / General</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-gold" id="gallery-submit-btn" style="width: auto; padding: 12px 28px;">
+                <span>Upload to Cloudinary</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="section-card">
+            <div class="section-card-header">
+              <h3 class="section-card-title">Live Gallery Photos</h3>
+              <div class="filter-pills" id="gallery-filter-pills">
+                <button class="pill-btn active" onclick="filterGalleryView('All')">All</button>
+                <button class="pill-btn" onclick="filterGalleryView('Auditorium')">Auditorium</button>
+                <button class="pill-btn" onclick="filterGalleryView('Lobby')">Lobby</button>
+                <button class="pill-btn" onclick="filterGalleryView('Exterior')">Exterior</button>
+                <button class="pill-btn" onclick="filterGalleryView('Food & Beverage')">Food & Beverage</button>
+                <button class="pill-btn" onclick="filterGalleryView('VIP Lounge')">VIP Lounge</button>
+              </div>
+            </div>
+
+            <div class="gallery-grid-admin" id="admin-gallery-grid">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 3: SITE ASSETS & IMAGES
+             ========================================= -->
+        <div class="panel-view" id="view-site-assets">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div>
+                <h3 class="section-card-title">Website Key Assets & Hero Images</h3>
+                <p style="font-size: 0.85rem; color: var(--cream-dim); margin-top: 4px;">
+                  Manage featured hero banners, photo strip marquee slides, posters, and brand visuals across Cinemark.html.
+                </p>
+              </div>
+              <button class="btn-gold" style="width: auto;" onclick="openAddAssetModal()">+ Add New Asset</button>
+            </div>
+
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Preview</th>
+                    <th>Asset Key</th>
+                    <th>Category</th>
+                    <th>Title</th>
+                    <th>Direct Cloudinary URL</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="site-assets-table">
+                  <tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">Loading assets...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 4: FRANCHISE ENQUIRIES
+             ========================================= -->
+        <div class="panel-view" id="view-enquiries">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div>
+                <h3 class="section-card-title">Franchise & Visitor Enquiries</h3>
+                <p style="font-size: 0.85rem; color: var(--cream-dim); margin-top: 4px;">
+                  All form submissions from the public website (Franchise form, Brochure requests, Contact) are stored here.
+                </p>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <select id="enquiry-filter-status" class="form-control" style="width: auto;" onchange="loadEnquiries()">
+                  <option value="all">All Statuses</option>
+                  <option value="new">New</option>
+                  <option value="in_progress">In Review</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Applicant Name</th>
+                    <th>Contact</th>
+                    <th>Location</th>
+                    <th>Business / Property</th>
+                    <th>Status</th>
+                    <th>Received At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="enquiries-table-body">
+                  <tr><td colspan="8" style="text-align: center; color: var(--cream-dim);">Loading enquiries...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 5: CINEMA LOCATIONS
+             ========================================= -->
+        <div class="panel-view" id="view-locations">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div>
+                <h3 class="section-card-title">Cinema Locations & Experience Hubs</h3>
+                <p style="font-size: 0.85rem; color: var(--cream-dim); margin-top: 4px;">
+                  Manage theaters displayed on the Locations page and interactive journey map.
+                </p>
+              </div>
+              <button class="btn-gold" style="width: auto;" onclick="openLocationModal()">+ Add Location</button>
+            </div>
+
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Location Name</th>
+                    <th>City / State</th>
+                    <th>Screens</th>
+                    <th>Features & Technology</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="locations-table-body">
+                  <tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">Loading locations...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 6: NEWS & PRESS
+             ========================================= -->
+        <div class="panel-view" id="view-news">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div>
+                <h3 class="section-card-title">News Releases & Announcements</h3>
+                <p style="font-size: 0.85rem; color: var(--cream-dim); margin-top: 4px;">
+                  Publish updates, expansion milestones, and press coverage.
+                </p>
+              </div>
+              <button class="btn-gold" style="width: auto;" onclick="openNewsModal()">+ Add Announcement</button>
+            </div>
+
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date Label</th>
+                    <th>Headline</th>
+                    <th>Category</th>
+                    <th>Body Preview</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="news-table-body">
+                  <tr><td colspan="5" style="text-align: center; color: var(--cream-dim);">Loading news...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 7: SITE CONTENT CMS
+             ========================================= -->
+        <div class="panel-view" id="view-cms">
+          <div class="section-card">
+            <div class="section-card-header">
+              <div>
+                <h3 class="section-card-title">Site Copy & Headings CMS</h3>
+                <p style="font-size: 0.85rem; color: var(--cream-dim); margin-top: 4px;">
+                  Update hero headline, brand story, and website text. HTML tags (like &lt;span&gt;, &lt;em&gt;) are supported.
+                </p>
+              </div>
+            </div>
+
+            <form id="cms-content-form">
+              <div class="form-group">
+                <label>Hero Main Title (HTML supported)</label>
+                <textarea id="cms-hero_title" class="form-control" rows="3" placeholder="e.g. Cinema, Reimagined In Gold."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>About Cinemark Paragraph</label>
+                <textarea id="cms-about_paragraph" class="form-control" rows="5" placeholder="Cinemark Group delivers premium experiential luxury cinemas..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Franchise Proposition Tagline</label>
+                <input type="text" id="cms-franchise_tagline" class="form-control" placeholder="India's Most Profitable Luxury Cinema Ecosystem">
+              </div>
+
+              <button type="submit" class="btn-gold" style="width: auto; padding: 12px 28px;">
+                <span>Save All Content Updates</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 8: NAVBAR LINKS
+             ========================================= -->
+        <div class="panel-view" id="view-navbar">
+          <div class="section-card">
+            <div class="section-card-header">
+              <h3 class="section-card-title">Add Navigation Link</h3>
+            </div>
+            <form id="navbar-form" style="display: grid; grid-template-columns: 2fr 2fr 1fr 1fr auto; gap: 12px; align-items: end;">
+              <div>
+                <label style="font-size: 0.78rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Title</label>
+                <input type="text" id="nav-title" class="form-control" placeholder="e.g. Experiences" required>
+              </div>
+              <div>
+                <label style="font-size: 0.78rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Page Target</label>
+                <input type="text" id="nav-href" class="form-control" placeholder="e.g. experience" required>
+              </div>
+              <div>
+                <label style="font-size: 0.78rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Placement</label>
+                <select id="nav-location" class="form-control">
+                  <option value="main">Main Bar</option>
+                  <option value="more">More Menu</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.78rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Order</label>
+                <input type="number" id="nav-order" class="form-control" value="1">
+              </div>
+              <button type="submit" class="btn-gold" style="padding: 12px 20px;">+ Add</button>
+            </form>
+          </div>
+
+          <div class="section-card">
+            <h3 class="section-card-title" style="margin-bottom: 16px;">Active Navigation Links</h3>
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Target ID / URL</th>
+                    <th>Menu Placement</th>
+                    <th>Order</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="navbar-table-body">
+                  <tr><td colspan="5" style="text-align: center; color: var(--cream-dim);">Loading navigation...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             VIEW 9: SETTINGS & SECURITY
+             ========================================= -->
+        <div class="panel-view" id="view-settings">
+          <div class="section-card">
+            <h3 class="section-card-title" style="margin-bottom: 14px;">Administrator Credentials</h3>
+            <p style="font-size: 0.85rem; color: var(--cream-dim); margin-bottom: 20px;">
+              Admin access is exclusively for website management. General visitors to Cinemark.html have zero login requirement.
+            </p>
+
+            <form id="password-change-form" style="max-width: 480px;">
+              <div class="form-group">
+                <label>Admin Email</label>
+                <input type="text" class="form-control" value="Cinemarkgroup@gmail.com" disabled style="opacity: 0.7;">
+              </div>
+              <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="curr-password" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="new-password" class="form-control" required minlength="6">
+              </div>
+              <button type="submit" class="btn-gold" style="width: auto; padding: 12px 24px;">Update Password</button>
+            </form>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- =========================================
+       MODALS
+       ========================================= -->
+
+  <!-- Enquiry Details Modal -->
+  <div class="modal-backdrop" id="enquiry-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Enquiry Details</h3>
+        <button class="modal-close" onclick="closeModal('enquiry-modal')">&times;</button>
+      </div>
+      <div id="enquiry-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Cinema Location Modal (Add/Edit) -->
+  <div class="modal-backdrop" id="location-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="location-modal-title">Add Cinema Location</h3>
+        <button class="modal-close" onclick="closeModal('location-modal')">&times;</button>
+      </div>
+      <form id="location-form">
+        <input type="hidden" id="loc-id">
+        <div class="form-group">
+          <label>Cinema / Lounge Name</label>
+          <input type="text" id="loc-name" class="form-control" placeholder="e.g. Cinemark Spectra X" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="form-group">
+          <div>
+            <label>City</label>
+            <input type="text" id="loc-city" class="form-control" placeholder="e.g. Bengaluru" required>
+          </div>
+          <div>
+            <label>State</label>
+            <input type="text" id="loc-state" class="form-control" placeholder="e.g. Karnataka">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Full Address</label>
+          <input type="text" id="loc-address" class="form-control" placeholder="e.g. 100ft Road, Indiranagar">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="form-group">
+          <div>
+            <label>Screens Count</label>
+            <input type="number" id="loc-screens" class="form-control" value="4" min="1">
+          </div>
+          <div>
+            <label>Operational Status</label>
+            <select id="loc-status" class="form-control">
+              <option value="Operational">Operational</option>
+              <option value="Upcoming">Upcoming / In Construction</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Features & Amenities (Comma separated)</label>
+          <input type="text" id="loc-features" class="form-control" placeholder="Dolby Atmos, 4K RGB Laser, VIP Recliners">
+        </div>
+        <button type="submit" class="btn-gold" style="margin-top: 10px;">Save Location</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- News Modal (Add/Edit) -->
+  <div class="modal-backdrop" id="news-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="news-modal-title">Publish News Article</h3>
+        <button class="modal-close" onclick="closeModal('news-modal')">&times;</button>
+      </div>
+      <form id="news-form">
+        <input type="hidden" id="news-id">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px;" class="form-group">
+          <div>
+            <label>Date Tag</label>
+            <input type="text" id="news-date" class="form-control" placeholder="e.g. MAR 2026">
+          </div>
+          <div>
+            <label>Category</label>
+            <input type="text" id="news-category" class="form-control" placeholder="e.g. Expansion / Technology">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Article Headline</label>
+          <input type="text" id="news-title" class="form-control" placeholder="e.g. Cinemark Launches 10 New Screens" required>
+        </div>
+        <div class="form-group">
+          <label>Content / Body</label>
+          <textarea id="news-body" class="form-control" rows="5" placeholder="Full announcement text..." required></textarea>
+        </div>
+        <button type="submit" class="btn-gold" style="margin-top: 10px;">Save Announcement</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Site Asset Modal -->
+  <div class="modal-backdrop" id="asset-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Website Asset</h3>
+        <button class="modal-close" onclick="closeModal('asset-modal')">&times;</button>
+      </div>
+      <form id="asset-form">
+        <div class="form-group">
+          <label>Asset Key (Unique identifier)</label>
+          <input type="text" id="asset-key" class="form-control" placeholder="e.g. hero_banner_1 or photostrip_5" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="form-group">
+          <div>
+            <label>Category</label>
+            <select id="asset-category" class="form-control">
+              <option value="hero">Hero Carousel</option>
+              <option value="photostrip">Photo Strip Marquee</option>
+              <option value="posters">Movie Posters</option>
+              <option value="branding">Branding & Logos</option>
+              <option value="general">General Asset</option>
+            </select>
+          </div>
+          <div>
+            <label>Title / Description</label>
+            <input type="text" id="asset-title" class="form-control" placeholder="e.g. Main Lobby Marquee">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Upload Image to Cloudinary</label>
+          <input type="file" id="asset-file" class="form-control" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>OR Direct Image URL</label>
+          <input type="url" id="asset-url" class="form-control" placeholder="https://res.cloudinary.com/...">
+        </div>
+        <button type="submit" class="btn-gold" style="margin-top: 10px;">Upload & Save Asset</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">Message here</div>
+
+  <!-- =========================================
+       JAVASCRIPT LOGIC
+       ========================================= -->
+  <script>
+    const API_BASE = '/api';
+    let currentView = 'dashboard';
+    let galleryData = [];
+    let currentGalleryFilter = 'All';
+
+    // Authentication token storage
+    function getToken() {
+      return localStorage.getItem('cinemark_admin_jwt');
+    }
+
+    function setToken(token) {
+      localStorage.setItem('cinemark_admin_jwt', token);
+    }
+
+    function removeToken() {
+      localStorage.removeItem('cinemark_admin_jwt');
+    }
+
+    // Authenticated fetch wrapper
+    async function apiFetch(endpoint, options = {}) {
+      const token = getToken();
+      const headers = options.headers || {};
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      // If body is not FormData, default to application/json
+      if (options.body && !(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+      }
+
+      options.headers = headers;
+
+      try {
+        const res = await fetch(`${API_BASE}${endpoint}`, options);
+        if (res.status === 401) {
+          showToast('Session expired or unauthorized. Please log in.', 'error');
+          logoutAdmin();
+          throw new Error('Unauthorized');
+        }
+        return res;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = `show ${type}`;
+      setTimeout(() => {
+        toast.className = '';
+      }, 3500);
+    }
+
+    // =========================================
+    // AUTHENTICATION FLOW
+    // =========================================
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('login-btn');
+      const errBox = document.getElementById('login-error-msg');
+
+      btn.disabled = true;
+      btn.innerHTML = 'Verifying credentials...';
+      errBox.style.display = 'none';
+
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.token) {
+          setToken(data.token);
+          document.getElementById('sidebar-admin-email').textContent = data.admin.email;
+          showApp();
+          showToast('Authenticated successfully as Administrator');
+          loadDashboardData();
+        } else {
+          errBox.textContent = data.error || 'Invalid credentials';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Server connection error. Ensure server is running.';
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Authenticate & Access</span> →';
+      }
+    });
+
+    async function checkAuthOnLoad() {
+      const token = getToken();
+      if (!token) {
+        showLogin();
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/verify`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('sidebar-admin-email').textContent = data.admin.email || 'Admin';
+          showApp();
+          loadDashboardData();
+        } else {
+          removeToken();
+          showLogin();
+        }
+      } catch (err) {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      document.getElementById('login-view').style.display = 'flex';
+      document.getElementById('admin-app').style.display = 'none';
+    }
+
+    function showApp() {
+      document.getElementById('login-view').style.display = 'none';
+      document.getElementById('admin-app').style.display = 'flex';
+    }
+
+    function logoutAdmin() {
+      removeToken();
+      showLogin();
+      showToast('Logged out successfully');
+    }
+
+    // =========================================
+    // VIEW SWITCHING
+    // =========================================
+    function switchView(viewName) {
+      currentView = viewName;
+
+      // Update Nav
+      document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(viewName)) {
+          item.classList.add('active');
+        }
+      });
+
+      // Update Panels
+      document.querySelectorAll('.panel-view').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      const targetPanel = document.getElementById(`view-${viewName}`);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      // Update Topbar Heading
+      const headings = {
+        dashboard: 'Dashboard & Overview',
+        gallery: 'Gallery Photo Management',
+        'site-assets': 'Hero Slides & Photo Strip Assets',
+        enquiries: 'Franchise & Visitor Enquiries',
+        locations: 'Cinema Locations & Screens',
+        news: 'News & Press Releases',
+        cms: 'Site Content Copy & Headlines',
+        navbar: 'Header Navigation Links',
+        settings: 'Settings & Administrator Security'
+      };
+      document.getElementById('page-heading').textContent = headings[viewName] || 'Admin Portal';
+
+      // Load view data
+      if (viewName === 'dashboard') loadDashboardData();
+      else if (viewName === 'gallery') loadGallery();
+      else if (viewName === 'site-assets') loadSiteAssets();
+      else if (viewName === 'enquiries') loadEnquiries();
+      else if (viewName === 'locations') loadLocations();
+      else if (viewName === 'news') loadNews();
+      else if (viewName === 'cms') loadCMSContent();
+      else if (viewName === 'navbar') loadNavbarLinks();
+    }
+
+    function refreshCurrentView() {
+      switchView(currentView);
+      showToast('Data refreshed');
+    }
+
+    // =========================================
+    // 1. DASHBOARD DATA
+    // =========================================
+    async function loadDashboardData() {
+      try {
+        const res = await apiFetch('/admin/stats');
+        const stats = await res.json();
+
+        document.getElementById('kpi-gallery').textContent = stats.galleryCount ?? 0;
+        document.getElementById('kpi-enquiries').textContent = stats.totalEnquiries ?? 0;
+        document.getElementById('kpi-locations').textContent = stats.locationsCount ?? 0;
+        document.getElementById('kpi-news').textContent = stats.newsCount ?? 0;
+
+        const badge = document.getElementById('badge-enquiries');
+        if (stats.newEnquiries > 0) {
+          badge.textContent = stats.newEnquiries;
+          badge.style.display = 'inline-block';
+          document.getElementById('kpi-new-enquiries').textContent = `${stats.newEnquiries} New Submissions`;
+        } else {
+          badge.style.display = 'none';
+          document.getElementById('kpi-new-enquiries').textContent = 'All inquiries reviewed';
+        }
+
+        // Load recent 5 enquiries
+        const enqRes = await apiFetch('/enquiries');
+        const enqs = await enqRes.json();
+        const tbody = document.getElementById('dash-enquiries-table');
+
+        if (!enqs || enqs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">No enquiries received yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = enqs.slice(0, 5).map(e => `
+          <tr>
+            <td><span class="status-badge status-${e.status}">${e.type || 'Franchise'}</span></td>
+            <td><strong>${escapeHtml(e.name)}</strong></td>
+            <td>${escapeHtml(e.phone || e.email || '—')}</td>
+            <td>${escapeHtml(e.city || '')} ${e.state ? `(${escapeHtml(e.state)})` : ''}</td>
+            <td><span class="status-badge status-${e.status}">${e.status}</span></td>
+            <td style="color: var(--cream-dim); font-size: 0.8rem;">${new Date(e.submitted_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        console.error('Error loading dashboard stats:', err);
+      }
+    }
+
+    // =========================================
+    // 2. GALLERY MANAGEMENT
+    // =========================================
+    async function loadGallery() {
+      const grid = document.getElementById('admin-gallery-grid');
+      grid.innerHTML = '<p style="color: var(--cream-dim);">Loading photos from Cloudinary & Database...</p>';
+
+      try {
+        const res = await apiFetch('/gallery');
+        galleryData = await res.json();
+        renderGalleryGrid();
+      } catch (err) {
+        grid.innerHTML = '<p style="color: var(--danger);">Failed to load gallery photos.</p>';
+      }
+    }
+
+    function filterGalleryView(section) {
+      currentGalleryFilter = section;
+      document.querySelectorAll('#gallery-filter-pills .pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === section);
+      });
+      renderGalleryGrid();
+    }
+
+    function renderGalleryGrid() {
+      const grid = document.getElementById('admin-gallery-grid');
+      const filtered = galleryData.filter(item => {
+        if (currentGalleryFilter === 'All') return true;
+        return item.section === currentGalleryFilter;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p style="color: var(--cream-dim); grid-column: 1 / -1;">No photos found in this category.</p>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => `
+        <div class="photo-card">
+          <div class="photo-img-wrap">
+            <img src="${item.url}" alt="${escapeHtml(item.title || '')}" loading="lazy">
+            <span class="photo-tag">${escapeHtml(item.section || 'All')}</span>
+          </div>
+          <div class="photo-info">
+            <div class="photo-title">${escapeHtml(item.title || 'Untitled Photo')}</div>
+            <div class="photo-actions">
+              <button class="btn-action-small" onclick="promptEditGallery(${item.id}, '${escapeHtml(item.title || '')}', '${item.section || 'All'}')">Edit</button>
+              <button class="btn-action-small btn-action-delete" onclick="deleteGalleryItem(${item.id})">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Gallery upload form
+    document.getElementById('gallery-upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('gallery-file-input');
+      const files = fileInput.files;
+
+      if (!files || files.length === 0) {
+        showToast('Please select at least one image to upload', 'error');
+        return;
+      }
+
+      const title = document.getElementById('gallery-caption').value.trim();
+      const section = document.getElementById('gallery-section').value;
+      const btn = document.getElementById('gallery-submit-btn');
+
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+      }
+      formData.append('title', title);
+      formData.append('section', section);
+
+      btn.disabled = true;
+      btn.innerHTML = 'Uploading to Cloudinary...';
+
+      try {
+        const res = await apiFetch('/gallery', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(`Uploaded ${data.count || 1} photo(s) to Cloudinary successfully!`);
+          document.getElementById('gallery-upload-form').reset();
+          loadGallery();
+        } else {
+          showToast(data.error || 'Upload failed', 'error');
+        }
+      } catch (err) {
+        showToast('Upload error', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Upload to Cloudinary</span>';
+      }
+    });
+
+    async function promptEditGallery(id, oldTitle, oldSection) {
+      const newTitle = prompt('Enter new photo title/caption:', oldTitle);
+      if (newTitle === null) return;
+      const newSection = prompt('Enter section (Auditorium, Lobby, Exterior, Food & Beverage, VIP Lounge, All):', oldSection);
+      if (newSection === null) return;
+
+      try {
+        const res = await apiFetch(`/gallery/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ title: newTitle, section: newSection })
+        });
+        if (res.ok) {
+          showToast('Photo updated');
+          loadGallery();
+        }
+      } catch (err) {
+        showToast('Failed to update photo', 'error');
+      }
+    }
+
+    async function deleteGalleryItem(id) {
+      if (!confirm('Are you sure you want to delete this photo? It will also be removed from Cloudinary CDN.')) return;
+      try {
+        const res = await apiFetch(`/gallery/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Photo deleted');
+          loadGallery();
+        }
+      } catch (err) {
+        showToast('Failed to delete photo', 'error');
+      }
+    }
+
+    // =========================================
+    // 3. SITE ASSETS (HERO & PHOTO STRIP)
+    // =========================================
+    async function loadSiteAssets() {
+      const tbody = document.getElementById('site-assets-table');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">Loading assets...</td></tr>';
+
+      try {
+        const res = await apiFetch('/admin/site-images');
+        const assets = await res.json();
+
+        if (!assets || assets.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">No custom assets configured yet. Click "+ Add New Asset" to create one.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = assets.map(a => `
+          <tr>
+            <td>
+              <img src="${a.image_url}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--line);" alt="">
+            </td>
+            <td><code>${escapeHtml(a.key_name)}</code></td>
+            <td><span class="status-badge status-new">${escapeHtml(a.category)}</span></td>
+            <td>${escapeHtml(a.title || '—')}</td>
+            <td>
+              <a href="${a.image_url}" target="_blank" style="color: var(--gold); font-size: 0.78rem;">View CDN Link ↗</a>
+            </td>
+            <td>
+              <button class="btn-action-small btn-action-delete" onclick="deleteSiteAsset(${a.id})">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger);">Failed to load site assets.</td></tr>';
+      }
+    }
+
+    function openAddAssetModal() {
+      document.getElementById('asset-form').reset();
+      openModal('asset-modal');
+    }
+
+    document.getElementById('asset-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const key_name = document.getElementById('asset-key').value.trim();
+      const category = document.getElementById('asset-category').value;
+      const title = document.getElementById('asset-title').value.trim();
+      const urlInput = document.getElementById('asset-url').value.trim();
+      const fileInput = document.getElementById('asset-file');
+
+      const formData = new FormData();
+      formData.append('key_name', key_name);
+      formData.append('category', category);
+      formData.append('title', title);
+
+      if (fileInput.files.length > 0) {
+        formData.append('image', fileInput.files[0]);
+      } else if (urlInput) {
+        formData.append('image_url', urlInput);
+      } else {
+        showToast('Please upload an image file or provide an image URL', 'error');
+        return;
+      }
+
+      try {
+        const res = await apiFetch('/admin/site-images', {
+          method: 'POST',
+          body: formData
+        });
+        if (res.ok) {
+          showToast('Site asset saved successfully');
+          closeModal('asset-modal');
+          loadSiteAssets();
+        } else {
+          const err = await res.json();
+          showToast(err.error || 'Failed to save asset', 'error');
+        }
+      } catch (err) {
+        showToast('Error saving asset', 'error');
+      }
+    });
+
+    async function deleteSiteAsset(id) {
+      if (!confirm('Delete this site asset?')) return;
+      try {
+        const res = await apiFetch(`/admin/site-images/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Asset deleted');
+          loadSiteAssets();
+        }
+      } catch (err) {
+        showToast('Failed to delete asset', 'error');
+      }
+    }
+
+    // =========================================
+    // 4. FRANCHISE & ENQUIRIES
+    // =========================================
+    let allEnquiries = [];
+    async function loadEnquiries() {
+      const tbody = document.getElementById('enquiries-table-body');
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--cream-dim);">Loading enquiries...</td></tr>';
+
+      const filterStatus = document.getElementById('enquiry-filter-status').value;
+      const url = filterStatus === 'all' ? '/enquiries' : `/enquiries?status=${filterStatus}`;
+
+      try {
+        const res = await apiFetch(url);
+        allEnquiries = await res.json();
+
+        if (!allEnquiries || allEnquiries.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--cream-dim);">No enquiries match this filter.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = allEnquiries.map(e => `
+          <tr>
+            <td><span class="status-badge status-new">${escapeHtml(e.type || 'franchise')}</span></td>
+            <td><strong>${escapeHtml(e.name)}</strong></td>
+            <td>
+              <div>${escapeHtml(e.phone || '')}</div>
+              <div style="font-size: 0.78rem; color: var(--cream-dim);">${escapeHtml(e.email || '')}</div>
+            </td>
+            <td>${escapeHtml(e.city || '')} ${e.state ? `<br><small style="color:var(--cream-dim)">${escapeHtml(e.state)}</small>` : ''}</td>
+            <td style="font-size: 0.8rem;">
+              <div><strong>Biz:</strong> ${escapeHtml(e.business || '—')}</div>
+              <div><strong>Prop:</strong> ${escapeHtml(e.property || '—')}</div>
+            </td>
+            <td>
+              <span class="status-badge status-${e.status}">${e.status}</span>
+            </td>
+            <td style="font-size: 0.78rem; color: var(--cream-dim);">
+              ${new Date(e.submitted_at).toLocaleString()}
+            </td>
+            <td>
+              <button class="btn-action-small" onclick="viewEnquiryDetail(${e.id})">Review Details</button>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--danger);">Failed to load enquiries.</td></tr>';
+      }
+    }
+
+    function viewEnquiryDetail(id) {
+      const enquiry = allEnquiries.find(e => e.id === id);
+      if (!enquiry) return;
+
+      const container = document.getElementById('enquiry-modal-content');
+      container.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 6px;">
+            <div><strong>Applicant:</strong> ${escapeHtml(enquiry.name)}</div>
+            <div><strong>Type:</strong> ${escapeHtml(enquiry.type || 'Franchise')}</div>
+            <div><strong>Phone:</strong> <a href="tel:${enquiry.phone}" style="color:var(--gold);">${escapeHtml(enquiry.phone || '—')}</a></div>
+            <div><strong>Email:</strong> <a href="mailto:${enquiry.email}" style="color:var(--gold);">${escapeHtml(enquiry.email || '—')}</a></div>
+            <div><strong>City / State:</strong> ${escapeHtml(enquiry.city || '—')} / ${escapeHtml(enquiry.state || '—')}</div>
+            <div><strong>Submitted:</strong> ${new Date(enquiry.submitted_at).toLocaleString()}</div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 4px;">Existing Business Background:</label>
+            <div style="background: rgba(255,255,255,0.04); padding: 10px; border-radius: 4px;">${escapeHtml(enquiry.business || 'None provided')}</div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 4px;">Property Details / Carpet Area:</label>
+            <div style="background: rgba(255,255,255,0.04); padding: 10px; border-radius: 4px;">${escapeHtml(enquiry.property || 'None provided')}</div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 4px;">Message / Partner Note:</label>
+            <div style="background: rgba(255,255,255,0.04); padding: 10px; border-radius: 4px; white-space: pre-wrap;">${escapeHtml(enquiry.message || 'No additional message')}</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--line); padding-top: 16px;">
+            <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Application Status</label>
+            <select id="modal-enquiry-status" class="form-control" style="margin-bottom: 12px;">
+              <option value="new" ${enquiry.status === 'new' ? 'selected' : ''}>New / Unread</option>
+              <option value="in_progress" ${enquiry.status === 'in_progress' ? 'selected' : ''}>In Review</option>
+              <option value="contacted" ${enquiry.status === 'contacted' ? 'selected' : ''}>Contacted / Scheduled</option>
+              <option value="closed" ${enquiry.status === 'closed' ? 'selected' : ''}>Closed / Archived</option>
+            </select>
+
+            <label style="font-size: 0.8rem; color: var(--cream-dim); display: block; margin-bottom: 6px;">Internal Notes (Admin Only)</label>
+            <textarea id="modal-enquiry-notes" class="form-control" rows="3" placeholder="Add confidential internal notes...">${escapeHtml(enquiry.notes || '')}</textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+            <button class="btn-outline" onclick="deleteEnquiry(${enquiry.id})" style="color: var(--danger); border-color: rgba(248,113,113,0.3);">Delete Enquiry</button>
+            <button class="btn-gold" style="width: auto;" onclick="saveEnquiryUpdates(${enquiry.id})">Update Status & Notes</button>
+          </div>
+        </div>
+      `;
+
+      openModal('enquiry-modal');
+    }
+
+    async function saveEnquiryUpdates(id) {
+      const status = document.getElementById('modal-enquiry-status').value;
+      const notes = document.getElementById('modal-enquiry-notes').value;
+
+      try {
+        const res = await apiFetch(`/enquiries/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ status, notes })
+        });
+        if (res.ok) {
+          showToast('Enquiry updated successfully');
+          closeModal('enquiry-modal');
+          loadEnquiries();
+          loadDashboardData();
+        }
+      } catch (err) {
+        showToast('Failed to update enquiry', 'error');
+      }
+    }
+
+    async function deleteEnquiry(id) {
+      if (!confirm('Are you sure you want to delete this enquiry record?')) return;
+      try {
+        const res = await apiFetch(`/enquiries/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Enquiry deleted');
+          closeModal('enquiry-modal');
+          loadEnquiries();
+          loadDashboardData();
+        }
+      } catch (err) {
+        showToast('Failed to delete enquiry', 'error');
+      }
+    }
+
+    // =========================================
+    // 5. CINEMA LOCATIONS
+    // =========================================
+    let allLocations = [];
+    async function loadLocations() {
+      const tbody = document.getElementById('locations-table-body');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">Loading locations...</td></tr>';
+
+      try {
+        const res = await apiFetch('/locations');
+        allLocations = await res.json();
+
+        if (!allLocations || allLocations.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">No cinema locations found.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = allLocations.map(loc => `
+          <tr>
+            <td><strong>${escapeHtml(loc.name)}</strong></td>
+            <td>${escapeHtml(loc.city)}${loc.state ? `, ${escapeHtml(loc.state)}` : ''}</td>
+            <td><span class="status-badge status-new">${loc.screens || 1} Screens</span></td>
+            <td style="font-size: 0.8rem; color: var(--cream-dim);">${escapeHtml(loc.features || '—')}</td>
+            <td><span class="status-badge ${loc.status === 'Operational' ? 'status-contacted' : 'status-in_progress'}">${loc.status}</span></td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-action-small" onclick="editLocation(${loc.id})">Edit</button>
+                <button class="btn-action-small btn-action-delete" onclick="deleteLocation(${loc.id})">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger);">Failed to load locations.</td></tr>';
+      }
+    }
+
+    function openLocationModal(editLoc = null) {
+      document.getElementById('location-form').reset();
+      document.getElementById('loc-id').value = '';
+
+      if (editLoc) {
+        document.getElementById('location-modal-title').textContent = 'Edit Cinema Location';
+        document.getElementById('loc-id').value = editLoc.id;
+        document.getElementById('loc-name').value = editLoc.name;
+        document.getElementById('loc-city').value = editLoc.city;
+        document.getElementById('loc-state').value = editLoc.state || '';
+        document.getElementById('loc-address').value = editLoc.address || '';
+        document.getElementById('loc-screens').value = editLoc.screens || 1;
+        document.getElementById('loc-status').value = editLoc.status || 'Operational';
+        document.getElementById('loc-features').value = editLoc.features || '';
+      } else {
+        document.getElementById('location-modal-title').textContent = 'Add Cinema Location';
+      }
+      openModal('location-modal');
+    }
+
+    function editLocation(id) {
+      const loc = allLocations.find(l => l.id === id);
+      if (loc) openLocationModal(loc);
+    }
+
+    document.getElementById('location-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('loc-id').value;
+      const payload = {
+        name: document.getElementById('loc-name').value.trim(),
+        city: document.getElementById('loc-city').value.trim(),
+        state: document.getElementById('loc-state').value.trim(),
+        address: document.getElementById('loc-address').value.trim(),
+        screens: parseInt(document.getElementById('loc-screens').value, 10) || 1,
+        status: document.getElementById('loc-status').value,
+        features: document.getElementById('loc-features').value.trim()
+      };
+
+      try {
+        const endpoint = id ? `/locations/${id}` : '/locations';
+        const method = id ? 'PUT' : 'POST';
+        const res = await apiFetch(endpoint, {
+          method,
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          showToast(`Location ${id ? 'updated' : 'added'} successfully`);
+          closeModal('location-modal');
+          loadLocations();
+        }
+      } catch (err) {
+        showToast('Error saving location', 'error');
+      }
+    });
+
+    async function deleteLocation(id) {
+      if (!confirm('Are you sure you want to delete this cinema location?')) return;
+      try {
+        const res = await apiFetch(`/locations/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Location deleted');
+          loadLocations();
+        }
+      } catch (err) {
+        showToast('Failed to delete location', 'error');
+      }
+    }
+
+    // =========================================
+    // 6. NEWS & PRESS
+    // =========================================
+    let allNews = [];
+    async function loadNews() {
+      const tbody = document.getElementById('news-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--cream-dim);">Loading news...</td></tr>';
+
+      try {
+        const res = await apiFetch('/news');
+        allNews = await res.json();
+
+        if (!allNews || allNews.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--cream-dim);">No news articles published.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = allNews.map(n => `
+          <tr>
+            <td><span class="status-badge status-new">${escapeHtml(n.date_label || '')}</span></td>
+            <td><strong>${escapeHtml(n.title)}</strong></td>
+            <td>${escapeHtml(n.category || 'General')}</td>
+            <td style="font-size: 0.8rem; color: var(--cream-dim); max-width: 300px;">
+              ${escapeHtml((n.body || '').substring(0, 90))}...
+            </td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-action-small" onclick="editNews(${n.id})">Edit</button>
+                <button class="btn-action-small btn-action-delete" onclick="deleteNews(${n.id})">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load news.</td></tr>';
+      }
+    }
+
+    function openNewsModal(editItem = null) {
+      document.getElementById('news-form').reset();
+      document.getElementById('news-id').value = '';
+
+      if (editItem) {
+        document.getElementById('news-modal-title').textContent = 'Edit News Article';
+        document.getElementById('news-id').value = editItem.id;
+        document.getElementById('news-date').value = editItem.date_label || '';
+        document.getElementById('news-category').value = editItem.category || '';
+        document.getElementById('news-title').value = editItem.title || '';
+        document.getElementById('news-body').value = editItem.body || '';
+      } else {
+        document.getElementById('news-modal-title').textContent = 'Publish News Article';
+        document.getElementById('news-date').value = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+      }
+      openModal('news-modal');
+    }
+
+    function editNews(id) {
+      const n = allNews.find(item => item.id === id);
+      if (n) openNewsModal(n);
+    }
+
+    document.getElementById('news-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('news-id').value;
+      const payload = {
+        date_label: document.getElementById('news-date').value.trim(),
+        category: document.getElementById('news-category').value.trim(),
+        title: document.getElementById('news-title').value.trim(),
+        body: document.getElementById('news-body').value.trim()
+      };
+
+      try {
+        const endpoint = id ? `/news/${id}` : '/news';
+        const method = id ? 'PUT' : 'POST';
+        const res = await apiFetch(endpoint, {
+          method,
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          showToast(`News article ${id ? 'updated' : 'published'}`);
+          closeModal('news-modal');
+          loadNews();
+        }
+      } catch (err) {
+        showToast('Failed to save news article', 'error');
+      }
+    });
+
+    async function deleteNews(id) {
+      if (!confirm('Are you sure you want to delete this news article?')) return;
+      try {
+        const res = await apiFetch(`/news/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('News article deleted');
+          loadNews();
+        }
+      } catch (err) {
+        showToast('Failed to delete news article', 'error');
+      }
+    }
+
+    // =========================================
+    // 7. SITE CONTENT CMS
+    // =========================================
+    async function loadCMSContent() {
+      try {
+        const res = await apiFetch('/content');
+        const contents = await res.json();
+        contents.forEach(c => {
+          const el = document.getElementById(c.id);
+          if (el) el.value = c.html_content;
+        });
+      } catch (err) {
+        console.error('Error loading content CMS:', err);
+      }
+    }
+
+    document.getElementById('cms-content-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const hero = document.getElementById('cms-hero_title').value;
+      const about = document.getElementById('cms-about_paragraph').value;
+      const tagline = document.getElementById('cms-franchise_tagline').value;
+
+      try {
+        await Promise.all([
+          apiFetch('/content', { method: 'POST', body: JSON.stringify({ id: 'cms-hero_title', html_content: hero }) }),
+          apiFetch('/content', { method: 'POST', body: JSON.stringify({ id: 'cms-about_paragraph', html_content: about }) }),
+          apiFetch('/content', { method: 'POST', body: JSON.stringify({ id: 'cms-franchise_tagline', html_content: tagline }) })
+        ]);
+        showToast('All website copy saved successfully!');
+      } catch (err) {
+        showToast('Failed to save site copy', 'error');
+      }
+    });
+
+    // =========================================
+    // 8. NAVBAR LINKS
+    // =========================================
+    async function loadNavbarLinks() {
+      const tbody = document.getElementById('navbar-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--cream-dim);">Loading links...</td></tr>';
+
+      try {
+        const res = await apiFetch('/navbar');
+        const links = await res.json();
+
+        if (!links || links.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--cream-dim);">No custom links added yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = links.map(l => `
+          <tr>
+            <td><strong>${escapeHtml(l.title)}</strong></td>
+            <td><code>${escapeHtml(l.href)}</code></td>
+            <td><span class="status-badge ${l.is_more ? 'status-new' : 'status-contacted'}">${l.is_more ? 'More Menu' : 'Main Bar'}</span></td>
+            <td>${l.sort_order}</td>
+            <td>
+              <button class="btn-action-small btn-action-delete" onclick="deleteNavLink(${l.id})">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load navbar links.</td></tr>';
+      }
+    }
+
+    document.getElementById('navbar-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('nav-title').value.trim();
+      const href = document.getElementById('nav-href').value.trim();
+      const isMore = document.getElementById('nav-location').value === 'more';
+      const sortOrder = parseInt(document.getElementById('nav-order').value, 10) || 1;
+
+      try {
+        const res = await apiFetch('/navbar', {
+          method: 'POST',
+          body: JSON.stringify({ title, href, isMore, sortOrder })
+        });
+        if (res.ok) {
+          showToast('Navbar link added');
+          document.getElementById('navbar-form').reset();
+          loadNavbarLinks();
+        }
+      } catch (err) {
+        showToast('Failed to add link', 'error');
+      }
+    });
+
+    async function deleteNavLink(id) {
+      if (!confirm('Delete this navbar link?')) return;
+      try {
+        const res = await apiFetch(`/navbar/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Link removed');
+          loadNavbarLinks();
+        }
+      } catch (err) {
+        showToast('Failed to delete link', 'error');
+      }
+    }
+
+    // =========================================
+    // 9. SETTINGS & PASSWORD
+    // =========================================
+    document.getElementById('password-change-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentPassword = document.getElementById('curr-password').value;
+      const newPassword = document.getElementById('new-password').value;
+
+      try {
+        const res = await apiFetch('/admin/settings/password', {
+          method: 'POST',
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast('Password updated successfully');
+          document.getElementById('password-change-form').reset();
+        } else {
+          showToast(data.error || 'Password update failed', 'error');
+        }
+      } catch (err) {
+        showToast('Error changing password', 'error');
+      }
+    });
+
+    // =========================================
+    // MODAL UTILITIES & HELPERS
+    // =========================================
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.remove('open');
+    }
+
+    // Close modal on click outside
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) backdrop.classList.remove('open');
+      });
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', checkAuthOnLoad);
+  </script>
+</body>
+</html>
