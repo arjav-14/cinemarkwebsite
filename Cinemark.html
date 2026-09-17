@@ -613,8 +613,7 @@
       position: absolute;
       inset: 0;
       z-index: 2;
-      background: #09070c;
-      transition: opacity 0.15s ease-out;
+      background: linear-gradient(180deg, rgba(13, 10, 15, 0.35) 0%, rgba(13, 10, 15, 0.55) 55%, rgba(13, 10, 15, 0.85) 100%);
     }
 
     .hero-beams {
@@ -8228,7 +8227,7 @@
       }
 
       .hero-overlay {
-        background: #09070c !important;
+        background: linear-gradient(180deg, rgba(13, 10, 15, 0.35) 0%, rgba(13, 10, 15, 0.55) 55%, rgba(13, 10, 15, 0.85) 100%) !important;
       }
 
       .hero-content {
@@ -10503,12 +10502,7 @@
         rotateBadge.style.opacity = textOpacity;
         rotateBadge.style.pointerEvents = textOpacity <= 0 ? 'none' : 'auto';
       }
-      if (heroOverlay) {
-        // At scroll 0: overlay is 1.0 (pure velvet background, zero logo clash behind text)
-        // As user scrolls past 0%, overlay fades down to 0.2 to reveal the vibrant cinema tour!
-        const overlayLevel = Math.max(0.2, 1 - (scrollProgress / 0.2) * 0.8);
-        heroOverlay.style.opacity = overlayLevel;
-      }
+      
 
       ticking = false;
     }
