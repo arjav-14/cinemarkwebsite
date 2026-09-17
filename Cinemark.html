@@ -613,7 +613,7 @@
       position: absolute;
       inset: 0;
       z-index: 2;
-      background: linear-gradient(180deg, rgba(13, 10, 15, 0.35) 0%, rgba(13, 10, 15, 0.55) 55%, rgba(13, 10, 15, 0.85) 100%);
+      background: linear-gradient(180deg, rgba(13, 10, 15, 0.25) 0%, rgba(13, 10, 15, 0.45) 55%, rgba(13, 10, 15, 0.75) 100%);
     }
 
     .hero-beams {
@@ -8227,7 +8227,7 @@
       }
 
       .hero-overlay {
-        background: linear-gradient(180deg, rgba(13, 10, 15, 0.35) 0%, rgba(13, 10, 15, 0.55) 55%, rgba(13, 10, 15, 0.85) 100%) !important;
+        background: linear-gradient(180deg, rgba(13, 10, 15, 0.20) 0%, rgba(13, 10, 15, 0.40) 55%, rgba(13, 10, 15, 0.70) 100%) !important;
       }
 
       .hero-content {
@@ -10431,19 +10431,47 @@
         const imgRatio = img.width / img.height;
         let drawWidth, drawHeight, drawX, drawY;
 
-        if (canvasRatio > imgRatio) {
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgRatio;
-          drawX = 0;
-          drawY = (canvas.height - drawHeight) / 2;
-        } else {
-          drawWidth = canvas.height * imgRatio;
-          drawHeight = canvas.height;
+        // Mobile portrait detection: when canvasRatio < 1.0 (phone screens like iPhone)
+        const isPortrait = canvasRatio < 1.0;
+        // Frames 1..38 (opening logo) and 255..300 (closing logo)
+        const isLogoFrame = (index <= 38 || index >= 255);
+
+        if (isPortrait && isLogoFrame) {
+          // Ensure CINEMARK MOVIES and the camera logo are 100% visible and uncropped
+          const targetLogoWidth = Math.min(canvas.width * 0.84, 520);
+          const logoScale = targetLogoWidth / 540;
+
+          drawWidth = img.naturalWidth * logoScale;
+          drawHeight = img.naturalHeight * logoScale;
           drawX = (canvas.width - drawWidth) / 2;
-          drawY = 0;
+          drawY = (canvas.height - drawHeight) / 2;
+
+          // Seamless dark royal purple vignette background matching frame corners
+          const bgGrad = ctx.createRadialGradient(
+            canvas.width / 2, canvas.height / 2, 40,
+            canvas.width / 2, canvas.height / 2, canvas.height * 0.65
+          );
+          bgGrad.addColorStop(0, '#1c132b');
+          bgGrad.addColorStop(0.55, '#0f0a18');
+          bgGrad.addColorStop(1, '#07050c');
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          // Standard immersive cover scaling for widescreen & interior walkthrough frames
+          if (canvasRatio > imgRatio) {
+            drawWidth = canvas.width;
+            drawHeight = canvas.width / imgRatio;
+            drawX = 0;
+            drawY = (canvas.height - drawHeight) / 2;
+          } else {
+            drawWidth = canvas.height * imgRatio;
+            drawHeight = canvas.height;
+            drawX = (canvas.width - drawWidth) / 2;
+            drawY = 0;
+          }
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
 
         // Golden overlay: as animation nears the end (frame > 70%), shift red tones to gold
