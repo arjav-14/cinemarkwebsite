@@ -50,7 +50,6 @@
       color: var(--cream);
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
-      cursor: none;
     }
 
     ::selection {
@@ -64,122 +63,6 @@
 
     button {
       font-family: inherit;
-    }
-
-    #cursor-glow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 520px;
-      height: 520px;
-      border-radius: 50%;
-      pointer-events: none;
-      background: radial-gradient(circle, rgba(214, 181, 83, 0.13) 0%, rgba(214, 181, 83, 0.05) 35%, transparent 70%);
-      transform: translate(-50%, -50%);
-      z-index: 9998;
-      transition: width .3s, height .3s;
-    }
-
-    #cursor-dot {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--gold-soft);
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      box-shadow: 0 0 20px 5px rgba(230, 198, 100, 0.8);
-    }
-
-    @media(hover:none) {
-
-      #cursor-glow,
-      #cursor-dot {
-        display: none;
-      }
-
-      body {
-        cursor: auto;
-      }
-    }
-
-    #curtain-wrap {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: flex;
-      pointer-events: none;
-    }
-
-    .curtain {
-      width: 50%;
-      height: 100%;
-      background: repeating-linear-gradient(90deg, #7a1128 0px, #8f1730 40px, #6a0f22 80px, #8f1730 120px, #7a1128 160px);
-      box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.6);
-      transition: transform 1.4s cubic-bezier(.76, 0, .24, 1);
-      position: relative;
-    }
-
-    #curtain-wrap.open .curtain.left {
-      transform: translateX(-102%);
-    }
-
-    #curtain-wrap.open .curtain.right {
-      transform: translateX(102%);
-    }
-
-    #curtain-wrap.hide {
-      display: none;
-    }
-
-    .reveal-tag {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Bebas Neue';
-      letter-spacing: 0.35em;
-      font-size: clamp(1.2rem, 3vw, 2rem);
-      color: var(--gold-soft);
-      z-index: 10001;
-      transition: opacity .6s ease;
-      text-align: center;
-    }
-
-    .reveal-tag img {
-      display: block;
-      max-width: min(70vw, 320px);
-      height: auto;
-      margin: 0 auto 18px;
-      filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.5));
-      animation: logoPop 1s cubic-bezier(.2, .8, .2, 1) both;
-    }
-
-    @keyframes logoPop {
-      from {
-        opacity: 0;
-        transform: scale(0.85);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .reveal-tag span {
-      display: block;
-      font-size: 0.5em;
-      color: var(--cream-dim);
-      letter-spacing: 0.3em;
-      margin-top: 0.6em;
-    }
-
-    .reveal-tag.fade {
-      opacity: 0;
     }
 
     nav {
@@ -8176,12 +8059,6 @@
       -webkit-text-size-adjust: 100%;
     }
 
-    @media (hover: none) {
-      #cursor-glow, #cursor-dot {
-        display: none !important;
-      }
-    }
-
     /* 2. Global Mobile Containers & Spacing (max-width: 768px) */
     @media (max-width: 768px) {
       nav {
@@ -8444,17 +8321,6 @@
 </head>
 
 <body>
-
-  <div id="cursor-glow"></div>
-  <div id="cursor-dot"></div>
-
-  <div id="curtain-wrap">
-    <div class="curtain left"></div>
-    <div class="curtain right"></div>
-    <div class="reveal-tag" id="revealTag"><img
-        src="https://res.cloudinary.com/mibjryxu/image/upload/a_90/v1784833491/cinemark_assets/media__1784833326110.png"
-        alt="Cinemark Movies logo" style="max-height: 80px; width: auto; margin-bottom: 12px;"><span>presents</span></div>
-  </div>
 
   <!-- NAV -->
   <nav>
@@ -10774,19 +10640,6 @@
       bookingState = { movie: null, showtime: null, seats: [], price: 300 };
       bookingGoStep(1);
     }
-
-    /* ---------------- CURTAIN INTRO ---------------- */
-    window.addEventListener('load', () => {
-      setTimeout(() => { document.getElementById('curtain-wrap').classList.add('open'); document.getElementById('revealTag').classList.add('fade'); }, 900);
-      setTimeout(() => { document.getElementById('curtain-wrap').classList.add('hide'); }, 2400);
-    });
-
-    /* ---------------- CURSOR ---------------- */
-    const glow = document.getElementById('cursor-glow'), dot = document.getElementById('cursor-dot');
-    window.addEventListener('mousemove', e => {
-      glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
-      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
-    });
 
     /* ---------------- SCROLL REVEAL ---------------- */
     let io;
