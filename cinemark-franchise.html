@@ -114,11 +114,39 @@ nav.scrolled{background:rgba(16,13,7,0.92); backdrop-filter:blur(14px); border-b
 .burger.open span:nth-child(2){opacity:0;}
 .burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
 @media(max-width:1020px){
-  .nav-links{position:fixed; inset:0; background:rgba(11,7,16,0.98); flex-direction:column; justify-content:center; gap:2rem; transform:translateX(100%); transition:transform .45s cubic-bezier(.2,.8,.2,1);}
-  .nav-links.open{transform:none;}
-  .nav-links a{font-size:1rem;}
-  .burger{display:flex;}
-  .nav-cta{display:none;}
+  nav, nav.scrolled{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(14, 11, 7, 0.96) !important;
+  }
+  .nav-links{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    margin:0 !important;
+    background:rgba(8,6,12,0.98) !important;
+    backdrop-filter:blur(25px) !important;
+    -webkit-backdrop-filter:blur(25px) !important;
+    flex-direction:column !important;
+    justify-content:flex-start !important;
+    align-items:flex-start !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch;
+    padding:95px 28px 50px 28px !important;
+    gap:0 !important;
+    transform:translateX(100%) !important;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1) !important;
+    z-index:9001 !important;
+  }
+  .nav-links.open{transform:translateX(0) !important;}
+  .nav-links li{width:100% !important; border-bottom:1px solid rgba(243,234,217,0.08) !important;}
+  .nav-links a{display:block !important; font-size:1.05rem !important; padding:15px 0 !important; color:var(--ivory) !important; letter-spacing:0.12em !important;}
+  .burger{display:flex !important; z-index:9005 !important;}
+  .nav-cta{display:none !important;}
 }
 
 /* ---------- Hero ---------- */
@@ -128,7 +156,6 @@ nav.scrolled{background:rgba(16,13,7,0.92); backdrop-filter:blur(14px); border-b
     radial-gradient(ellipse 70% 55% at 78% 8%, rgba(208,175,84,0.10), transparent 62%),
     radial-gradient(ellipse 55% 45% at 12% 88%, rgba(212,175,85,0.10), transparent 60%),
     linear-gradient(180deg,#100D07 0%, #17120A 55%, #100D07 100%);}
-/* projector beam */
 .beam{position:absolute; top:-12%; right:8%; width:46vw; height:130%; z-index:1; pointer-events:none; opacity:.55;
   background:conic-gradient(from 195deg at 100% 0%, transparent 0deg, rgba(238,217,160,0.10) 8deg, rgba(238,217,160,0.03) 16deg, transparent 24deg);
   animation:beamDrift 12s ease-in-out infinite alternate;}
@@ -471,6 +498,147 @@ footer{border-top:1px solid var(--line-soft); padding:64px 6% 120px; background:
   *,*::before,*::after{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
   html{scroll-behavior:auto;}
 }
+
+/* ==========================================================================
+   PRODUCTION MOBILE RESPONSIVENESS SUITE - FRANCHISE PAGE
+   ========================================================================== */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 14px 18px !important;
+    z-index: 9000 !important;
+  }
+
+  /* 1. Hero Adjustments & Duplicate Logo Removal */
+  .hero-mark {
+    display: none !important;
+  }
+
+  .hero {
+    min-height: auto !important;
+    padding: 105px 18px 40px !important;
+  }
+
+  .hero-inner {
+    padding: 0 !important;
+  }
+
+  .h-xl {
+    font-size: clamp(2.2rem, 9vw, 3.2rem) !important;
+    line-height: 1.15 !important;
+  }
+
+  .lede {
+    font-size: 0.95rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .hero-ctas {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  .hero-ctas .btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 15px 24px !important;
+  }
+
+  /* 2. Hero Foot & Stats - Flow naturally without dead gap */
+  .hero-foot {
+    position: static !important;
+    margin-top: 36px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 20px !important;
+    padding-bottom: 0 !important;
+  }
+
+  .hero-stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 18px 12px !important;
+    width: 100% !important;
+  }
+
+  .hstat {
+    text-align: center !important;
+    padding: 14px 10px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(214, 181, 83, 0.18) !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .hstat b {
+    font-size: clamp(1.7rem, 6vw, 2.2rem) !important;
+    color: var(--gold) !important;
+    margin-bottom: 4px !important;
+  }
+
+  .hstat span {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.14em !important;
+    line-height: 1.35 !important;
+  }
+
+  .hstat:last-child {
+    grid-column: span 2 !important;
+  }
+
+  .scroll-cue {
+    display: none !important;
+  }
+
+  /* 3. Sections & Content */
+  section {
+    padding: 50px 18px !important;
+  }
+
+  .section-head {
+    margin-bottom: 36px !important;
+  }
+
+  .h-lg {
+    font-size: clamp(1.8rem, 7vw, 2.4rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  /* 4. Comparison Tables Horizontal Scroll */
+  .compare, .table-wrap {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .compare table {
+    min-width: 520px !important;
+  }
+
+  /* 5. Inputs 16px for iOS Safari */
+  input, select, textarea {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
 </style>
 <style>
 /* ===== Kit theme overrides — Cinemark Movies ===== */
@@ -658,9 +826,9 @@ h1 em,h2 em,h3 em,.big-quote em{font-family:'Lora',serif; font-style:italic; fon
   </div>
   <div class="hero-foot">
     <div class="hero-stats">
-      <div class="hstat"><b data-count="2016" data-plain="1">0</b><span>Established</span></div>
-      <div class="hstat"><b data-count="10" data-plain="1">0</b><span>Years of Excellence</span></div>
-      <div class="hstat"><b data-count="40">0</b><span>Premium Screens</span></div>
+      <div class="hstat"><b data-count="2016" data-plain="1">2016</b><span>Established</span></div>
+      <div class="hstat"><b data-count="10" data-plain="1">10+</b><span>Years of Excellence</span></div>
+      <div class="hstat"><b data-count="40">40+</b><span>Premium Screens</span></div>
       <div class="hstat"><b>FOFO</b><span>Own It · Run It · Earn It</span></div>
     </div>
     <div class="scroll-cue"><span>Discover</span><i></i></div>
