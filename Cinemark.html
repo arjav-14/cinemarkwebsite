@@ -613,7 +613,8 @@
       position: absolute;
       inset: 0;
       z-index: 2;
-      background: linear-gradient(180deg, rgba(13, 10, 15, 0.55) 0%, rgba(13, 10, 15, 0.75) 55%, rgba(13, 10, 15, 0.95) 100%);
+      background: #09070c;
+      transition: opacity 0.15s ease-out;
     }
 
     .hero-beams {
@@ -8216,44 +8217,78 @@
         line-height: 1.55 !important;
       }
 
-      /* 3. Hero Section & Typography */
+      
+      /* 3. Hero Section & Typography Refinements */
       .hero-scroll-container {
         height: 130vh;
       }
 
       .hero {
-        padding: 100px 18px 40px !important;
+        padding: 90px 18px 40px !important;
+      }
+
+      .hero-overlay {
+        background: #09070c !important;
       }
 
       .hero-content {
         max-width: 100% !important;
-        padding: 0 10px !important;
+        padding: 0 16px !important;
+        text-align: center !important;
+        position: relative !important;
+        z-index: 5 !important;
+      }
+
+      .hero .eyebrow {
+        display: inline-flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        letter-spacing: 0.18em !important;
+        font-size: 0.72rem !important;
+        white-space: nowrap !important;
+        margin: 0 auto 16px auto !important;
+        width: 100% !important;
+        text-align: center !important;
+      }
+
+      .hero .eyebrow::before,
+      .hero .eyebrow::after {
+        display: none !important;
       }
 
       .hero h1 {
-        font-size: clamp(2.2rem, 9.5vw, 3.2rem) !important;
+        font-size: clamp(2.3rem, 10vw, 3.2rem) !important;
         letter-spacing: -0.5px !important;
-        line-height: 1.12 !important;
+        line-height: 1.15 !important;
+        margin: 0 0 14px 0 !important;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
       }
 
       .hero p.sub {
         font-size: 0.92rem !important;
-        margin-bottom: 24px !important;
-        line-height: 1.5 !important;
+        margin: 0 auto 26px auto !important;
+        line-height: 1.55 !important;
+        max-width: 325px !important;
+        color: rgba(243, 234, 217, 0.85) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
       }
 
       .hero-ctas {
-        flex-direction: column !important;
+        display: flex !important;
+        justify-content: center !important;
         width: 100% !important;
-        gap: 12px !important;
       }
 
-      .hero-ctas a, .hero-ctas button, .btn-primary {
+      .hero-ctas a.btn-primary, .hero-ctas a, .hero-ctas button {
         width: 100% !important;
+        max-width: 310px !important;
         text-align: center !important;
         justify-content: center !important;
-        padding: 15px 24px !important;
+        padding: 16px 24px !important;
         font-size: 0.85rem !important;
+        margin: 0 auto !important;
+        border-radius: 4px !important;
+        box-shadow: 0 8px 30px rgba(212, 175, 55, 0.35) !important;
       }
 
       /* 4. Stats Panel (Pill Toggle) - Luxury 2-Column Responsive Grid */
@@ -10453,11 +10488,12 @@
         drawFrame(currentFrameIndex);
       }
 
-      // Fade out text overlay after 20% scroll
+      // Fade out text overlay after 20% scroll, and fade overlay to reveal vivid cinema tour
       const textOpacity = Math.max(0, 1 - (scrollProgress / 0.2));
 
       const heroContent = document.querySelector('#page-home .hero-content');
       const rotateBadge = document.querySelector('#page-home .rotate-badge');
+      const heroOverlay = document.querySelector('#page-home .hero-overlay');
 
       if (heroContent) {
         heroContent.style.opacity = textOpacity;
@@ -10466,6 +10502,12 @@
       if (rotateBadge) {
         rotateBadge.style.opacity = textOpacity;
         rotateBadge.style.pointerEvents = textOpacity <= 0 ? 'none' : 'auto';
+      }
+      if (heroOverlay) {
+        // At scroll 0: overlay is 1.0 (pure velvet background, zero logo clash behind text)
+        // As user scrolls past 0%, overlay fades down to 0.2 to reveal the vibrant cinema tour!
+        const overlayLevel = Math.max(0.2, 1 - (scrollProgress / 0.2) * 0.8);
+        heroOverlay.style.opacity = overlayLevel;
       }
 
       ticking = false;
