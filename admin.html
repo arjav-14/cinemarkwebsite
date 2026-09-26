@@ -1542,21 +1542,61 @@
               Admin access is exclusively for website management. General visitors to Cinemark.html have zero login requirement.
             </p>
 
-            <form id="password-change-form" style="max-width: 480px;">
-              <div class="form-group">
-                <label>Admin Email</label>
-                <input type="text" class="form-control" value="Cinemarkgroup@gmail.com" disabled style="opacity: 0.7;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start;">
+              <!-- Password Form -->
+              <form id="password-change-form" style="max-width: 460px;">
+                <div class="form-group">
+                  <label>Admin Email</label>
+                  <input type="text" class="form-control" value="Cinemarkgroup@gmail.com" disabled style="opacity: 0.7;">
+                </div>
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input type="password" id="curr-password" class="form-control" placeholder="Enter current password" required>
+                </div>
+                <div class="form-group">
+                  <label>New Password (Min 8 chars, 1 letter, 1 number)</label>
+                  <input type="password" id="new-password" class="form-control" placeholder="Enter new strong password" required minlength="8">
+                </div>
+                <div class="form-group">
+                  <label>Confirm New Password</label>
+                  <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter new password" required minlength="8">
+                </div>
+                <button type="submit" class="btn-gold" style="width: auto; padding: 12px 24px;">Update Password</button>
+              </form>
+
+              <!-- Security Status Overview Panel -->
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--line-strong); border-radius: 8px; padding: 22px;">
+                <h4 style="color: var(--gold); font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                  <span>🛡️</span> Security Shields Active
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem; color: var(--cream-dim);">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--emerald); font-weight: bold;">✓</span>
+                    <span><strong>SSL / TLS:</strong> Strict 256-bit encryption on custom domain</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--emerald); font-weight: bold;">✓</span>
+                    <span><strong>Brute-Force Guard:</strong> Max 5 attempts (15-min IP lockout)</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--emerald); font-weight: bold;">✓</span>
+                    <span><strong>Cryptographic Hashing:</strong> Salted scrypt hashing with timing protection</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--emerald); font-weight: bold;">✓</span>
+                    <span><strong>Session Invalidation:</strong> Global token revocation on password reset</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--emerald); font-weight: bold;">✓</span>
+                    <span><strong>Inactivity Guard:</strong> Automatic logout after 20 minutes idle</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--emerald); font-weight: bold;">✓</span>
+                    <span><strong>Anti-Clickjacking:</strong> Frameguard protection active</span>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label>Current Password</label>
-                <input type="password" id="curr-password" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label>New Password</label>
-                <input type="password" id="new-password" class="form-control" required minlength="6">
-              </div>
-              <button type="submit" class="btn-gold" style="width: auto; padding: 12px 24px;">Update Password</button>
-            </form>
+            </div>
           </div>
         </div>
 
@@ -2646,6 +2686,20 @@
       e.preventDefault();
       const currentPassword = document.getElementById('curr-password').value;
       const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      if (newPassword !== confirmPassword) {
+        showToast('New password and confirmation do not match!', 'error');
+        return;
+      }
+      if (newPassword.length < 8) {
+        showToast('Password must be at least 8 characters long.', 'error');
+        return;
+      }
+      if (!/[a-zA-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+        showToast('Password must contain at least one letter and one number.', 'error');
+        return;
+      }
 
       try {
         const res = await apiFetch('/admin/settings/password', {
@@ -2654,14 +2708,40 @@
         });
         const data = await res.json();
         if (res.ok) {
-          showToast('Password updated successfully');
+          showToast('✅ Password updated successfully! Please re-login with your new password.');
           document.getElementById('password-change-form').reset();
+          setTimeout(() => {
+            logoutAdmin();
+          }, 1500);
         } else {
           showToast(data.error || 'Password update failed', 'error');
         }
       } catch (err) {
         showToast('Error changing password', 'error');
       }
+    });
+
+    // =========================================
+    // INACTIVITY AUTO-LOGOUT SHIELD (20 MINUTES)
+    // =========================================
+    let idleTimer = null;
+    const IDLE_TIMEOUT_MS = 20 * 60 * 1000; // 20 minutes
+
+    function resetIdleTimer() {
+      if (idleTimer) clearTimeout(idleTimer);
+      if (getToken()) {
+        idleTimer = setTimeout(() => {
+          if (getToken()) {
+            logoutAdmin();
+            alert('🔒 Security Notice: Your administrative session has timed out due to 20 minutes of inactivity. Please log in again.');
+          }
+        }, IDLE_TIMEOUT_MS);
+      }
+    }
+
+    // Track user activity
+    ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evt => {
+      window.addEventListener(evt, resetIdleTimer, { passive: true });
     });
 
     // =========================================

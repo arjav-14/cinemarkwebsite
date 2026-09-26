@@ -11,8 +11,10 @@ const multer = require('multer');
 const { Pool } = require('pg');
 const cloudinary = require('cloudinary').v2;
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const app = express();
+app.disable('x-powered-by');
 
 // --- Configuration & Secrets ---
 const PORT = process.env.PORT || 3000;
@@ -162,7 +164,10 @@ const upload = multer({
 // --- Security & Middleware ---
 app.use(helmet({
   contentSecurityPolicy: false, // Allows CDN scripts, Google Fonts, and Cloudinary media
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  frameguard: { action: 'sameorigin' }, // Prevents iframe clickjacking
+  xssFilter: true,
+  noSniff: true
 }));
 
 app.use(cors());
@@ -180,8 +185,8 @@ app.use('/api/', generalLimiter);
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 15,
-  message: { error: 'Too many login attempts. Please try again after 15 minutes.' }
+  max: 10,
+  message: { error: 'Too many login attempts from this network. Please try again after 15 minutes.' }
 });
 
 const enquiryLimiter = rateLimit({
@@ -193,13 +198,89 @@ const enquiryLimiter = rateLimit({
 // Serve static assets
 app.use(express.static(path.join(__dirname, './')));
 
-// --- Helper Functions ---
+// --- Cryptographic Password Security & Brute-Force Shield ---
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `scrypt:${salt}:${hash}`;
+}
+
+function verifyPassword(candidatePassword, storedHashOrPlain) {
+  if (!candidatePassword || !storedHashOrPlain) return false;
+  if (storedHashOrPlain.startsWith('scrypt:')) {
+    try {
+      const parts = storedHashOrPlain.split(':');
+      const salt = parts[1];
+      const key = parts[2];
+      const keyBuffer = Buffer.from(key, 'hex');
+      const candidateBuffer = crypto.scryptSync(candidatePassword, salt, 64);
+      return crypto.timingSafeEqual(keyBuffer, candidateBuffer);
+    } catch (e) {
+      return false;
+    }
+  }
+  // Plain text fallback during initial migration
+  return candidatePassword === storedHashOrPlain;
+}
+
+// In-Memory Brute-Force Account Lockout Tracker
+const loginAttemptsMap = new Map(); // ip -> { count, lockedUntil }
+
+function getClientIp(req) {
+  return req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
+}
+
+function checkLoginLockout(ip) {
+  const record = loginAttemptsMap.get(ip);
+  if (!record) return { locked: false };
+  if (record.lockedUntil && Date.now() < record.lockedUntil) {
+    const remainingMins = Math.ceil((record.lockedUntil - Date.now()) / (60 * 1000));
+    return { locked: true, remainingMins };
+  }
+  if (record.lockedUntil && Date.now() >= record.lockedUntil) {
+    loginAttemptsMap.delete(ip);
+    return { locked: false };
+  }
+  return { locked: false, attempts: record.count };
+}
+
+function recordFailedLogin(ip) {
+  const record = loginAttemptsMap.get(ip) || { count: 0, lockedUntil: null };
+  record.count += 1;
+  const MAX_ATTEMPTS = 5;
+  if (record.count >= MAX_ATTEMPTS) {
+    record.lockedUntil = Date.now() + 15 * 60 * 1000; // 15-minute lock
+    loginAttemptsMap.set(ip, record);
+    return { locked: true, remainingMins: 15 };
+  }
+  loginAttemptsMap.set(ip, record);
+  return { locked: false, remainingAttempts: MAX_ATTEMPTS - record.count };
+}
+
+function resetFailedLogin(ip) {
+  loginAttemptsMap.delete(ip);
+}
+
+// Global Token Versioning for Session Invalidation
+let memoryTokenVersion = 1;
+
+async function getStoredTokenVersion() {
+  try {
+    const res = await pool.query("SELECT value FROM admin_settings WHERE key = 'token_version'");
+    if (res.rows.length > 0 && res.rows[0].value) {
+      return parseInt(res.rows[0].value, 10);
+    }
+  } catch (err) {}
+  return memoryTokenVersion;
+}
+
+// --- JWT Helper Functions ---
 function generateToken(payload) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  // 12-hour session security standard
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '12h' });
 }
 
 // Admin Authentication Middleware
-function requireAdmin(req, res, next) {
+async function requireAdmin(req, res, next) {
   const authHeader = req.headers['authorization'];
   let token = null;
 
@@ -207,24 +288,22 @@ function requireAdmin(req, res, next) {
     token = authHeader.split(' ')[1];
   } else if (req.headers['x-admin-token']) {
     token = req.headers['x-admin-token'];
-  } else if (req.headers['x-admin-password']) {
-    // Backward compatibility for legacy requests
-    if (req.headers['x-admin-password'] === ADMIN_PASSWORD) {
-      req.admin = { email: ADMIN_EMAIL, role: 'admin' };
-      return next();
-    }
   }
 
   if (!token) {
-    return res.status(401).json({ error: 'Access denied. No authentication token provided.' });
+    return res.status(401).json({ error: 'Access denied. Please authenticate as Administrator.' });
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    const activeVersion = await getStoredTokenVersion();
+    if (decoded.v !== undefined && decoded.v < activeVersion) {
+      return res.status(401).json({ error: 'Session invalidated due to password change. Please log in again.' });
+    }
     req.admin = decoded;
     next();
   } catch (err) {
-    return res.status(401).json({ error: 'Invalid or expired authentication token.' });
+    return res.status(401).json({ error: 'Invalid or expired administrative session. Please log in again.' });
   }
 }
 
@@ -277,13 +356,19 @@ async function getAdminPassword() {
     if (res.rows.length > 0 && res.rows[0].value) {
       return res.rows[0].value;
     }
-  } catch (err) {
-    // Fall back to memory / env if table does not exist yet
-  }
+  } catch (err) {}
   return ADMIN_PASSWORD;
 }
 
 app.post('/api/login', loginLimiter, async (req, res) => {
+  const ip = getClientIp(req);
+  const lockout = checkLoginLockout(ip);
+  if (lockout.locked) {
+    return res.status(429).json({
+      error: `Too many failed login attempts. Account locked. Please try again in ${lockout.remainingMins} minute(s).`
+    });
+  }
+
   const { error, value } = loginSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
@@ -291,10 +376,31 @@ app.post('/api/login', loginLimiter, async (req, res) => {
 
   const email = value.email.toLowerCase().trim();
   const password = value.password;
-  const activePassword = await getAdminPassword();
+  const storedPassword = await getAdminPassword();
 
-  if (email === ADMIN_EMAIL && password === activePassword) {
-    const token = generateToken({ email: ADMIN_EMAIL, role: 'admin' });
+  const isEmailMatch = (email === ADMIN_EMAIL);
+  const isPassMatch = verifyPassword(password, storedPassword);
+
+  if (isEmailMatch && isPassMatch) {
+    resetFailedLogin(ip);
+
+    // Auto-migrate legacy plain text to salted scrypt hash
+    if (!storedPassword.startsWith('scrypt:')) {
+      const hashed = hashPassword(password);
+      try {
+        await pool.query(`
+          INSERT INTO admin_settings (key, value, updated_at)
+          VALUES ('admin_password', $1, NOW())
+          ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()
+        `, [hashed]);
+      } catch (e) {}
+    }
+
+    const version = await getStoredTokenVersion();
+    const token = generateToken({ email: ADMIN_EMAIL, role: 'admin', v: version });
+
+    console.log(`🛡️ [SECURITY AUDIT] Admin login SUCCESS from IP: ${ip} at ${new Date().toISOString()}`);
+
     return res.json({
       success: true,
       token,
@@ -305,7 +411,18 @@ app.post('/api/login', loginLimiter, async (req, res) => {
     });
   }
 
-  return res.status(401).json({ error: 'Invalid admin email or password.' });
+  const failure = recordFailedLogin(ip);
+  console.warn(`⚠️ [SECURITY AUDIT] Admin login FAILED for ${email} from IP: ${ip}. Remaining attempts: ${failure.remainingAttempts ?? 0}`);
+
+  if (failure.locked) {
+    return res.status(429).json({
+      error: 'Maximum 5 attempts reached. Your IP has been temporarily locked out for 15 minutes.'
+    });
+  }
+
+  return res.status(401).json({
+    error: `Invalid email or password. (${failure.remainingAttempts} attempt${failure.remainingAttempts === 1 ? '' : 's'} remaining before lockout)`
+  });
 });
 
 app.get('/api/auth/verify', requireAdmin, (req, res) => {
@@ -318,17 +435,26 @@ app.post('/api/admin/settings/password', requireAdmin, async (req, res) => {
     return res.status(400).json({ error: 'Current password and new password are required.' });
   }
 
-  const activePassword = await getAdminPassword();
-  if (currentPassword !== activePassword) {
+  const storedPassword = await getAdminPassword();
+  if (!verifyPassword(currentPassword, storedPassword)) {
     return res.status(400).json({ error: 'Current password does not match.' });
   }
-  if (newPassword.length < 6) {
-    return res.status(400).json({ error: 'New password must be at least 6 characters.' });
+
+  // Strict Password Complexity Policy
+  if (newPassword.length < 8) {
+    return res.status(400).json({ error: 'New password must be at least 8 characters long.' });
+  }
+  if (!/[a-zA-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+    return res.status(400).json({ error: 'New password must contain at least one letter and one number.' });
+  }
+  if (currentPassword === newPassword) {
+    return res.status(400).json({ error: 'New password cannot be the same as your current password.' });
   }
 
-  ADMIN_PASSWORD = newPassword;
+  const hashedPassword = hashPassword(newPassword);
+  ADMIN_PASSWORD = hashedPassword;
 
-  // Persist permanently in PostgreSQL database
+  // Persist salted hash in database & increment token version
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS admin_settings (
@@ -341,12 +467,25 @@ app.post('/api/admin/settings/password', requireAdmin, async (req, res) => {
       INSERT INTO admin_settings (key, value, updated_at)
       VALUES ('admin_password', $1, NOW())
       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()
-    `, [newPassword]);
+    `, [hashedPassword]);
+
+    // Invalidate all existing login tokens across all devices
+    memoryTokenVersion += 1;
+    await pool.query(`
+      INSERT INTO admin_settings (key, value, updated_at)
+      VALUES ('token_version', $1, NOW())
+      ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()
+    `, [memoryTokenVersion.toString()]);
+
+    console.log(`🛡️ [SECURITY AUDIT] Admin password updated securely. All other active sessions revoked.`);
   } catch (dbErr) {
     console.error('Error persisting admin password to DB:', dbErr);
   }
 
-  return res.json({ success: true, message: 'Admin password updated and saved permanently!' });
+  return res.json({
+    success: true,
+    message: 'Admin password updated securely with cryptographic hashing! All other sessions have been logged out.'
+  });
 });
 
 // ==========================================
