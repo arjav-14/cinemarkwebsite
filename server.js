@@ -607,6 +607,69 @@ app.get('/api/enquiries', requireAdmin, async (req, res) => {
   }
 });
 
+// Admin export enquiries to CSV / Excel spreadsheet
+app.get('/api/admin/enquiries/export.csv', requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM enquiries ORDER BY submitted_at DESC');
+    const enquiries = result.rows;
+
+    const headers = [
+      'Enquiry ID',
+      'Submitted At (IST)',
+      'Type',
+      'Name',
+      'Phone',
+      'Email',
+      'City',
+      'State',
+      'Business Background',
+      'Property Details',
+      'Message',
+      'Status',
+      'Internal Notes'
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const csvLines = [headers.join(',')];
+
+    for (const e of enquiries) {
+      const dateIST = e.submitted_at 
+        ? new Date(e.submitted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) 
+        : '';
+      const line = [
+        escapeCsv(e.id),
+        escapeCsv(dateIST),
+        escapeCsv(e.type || 'franchise'),
+        escapeCsv(e.name),
+        escapeCsv(e.phone ? `'${e.phone}` : ''),
+        escapeCsv(e.email),
+        escapeCsv(e.city),
+        escapeCsv(e.state),
+        escapeCsv(e.business),
+        escapeCsv(e.property),
+        escapeCsv(e.message),
+        escapeCsv((e.status || 'new').toUpperCase()),
+        escapeCsv(e.notes)
+      ].join(',');
+      csvLines.push(line);
+    }
+
+    const csvContent = '\uFEFF' + csvLines.join('\r\n');
+    const today = new Date().toISOString().split('T')[0];
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="Cinemark_Enquiries_${today}.csv"`);
+    res.send(csvContent);
+  } catch (err) {
+    console.error('Error exporting enquiries CSV:', err);
+    res.status(500).json({ error: 'Failed to export enquiries CSV.' });
+  }
+});
+
 // Admin update enquiry status & notes
 app.put('/api/enquiries/:id', requireAdmin, async (req, res) => {
   const { status, notes } = req.body;

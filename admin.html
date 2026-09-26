@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,400&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- SheetJS for Instant Excel (.xlsx) Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --bg: #070707;
@@ -230,6 +232,32 @@
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
+    }
+
+    .btn-excel {
+      background: linear-gradient(135deg, #107c41 0%, #0c572e 100%);
+      color: #ffffff;
+      border: 1px solid rgba(16, 124, 65, 0.4);
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s;
+    }
+
+    .btn-excel:hover {
+      background: linear-gradient(135deg, #15944f 0%, #107c41 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(16, 124, 65, 0.4);
+    }
+
+    .btn-excel svg {
+      flex-shrink: 0;
     }
 
     .login-error {
@@ -1168,7 +1196,13 @@
           <div class="section-card">
             <div class="section-card-header">
               <h3 class="section-card-title">Recent Franchise & Lead Submissions</h3>
-              <button class="btn-outline" onclick="switchView('enquiries')">View All Inquiries →</button>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn-excel" onclick="exportEnquiriesToExcel()" style="padding: 8px 14px; font-size: 0.8rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  <span>Export to Excel</span>
+                </button>
+                <button class="btn-outline" onclick="switchView('enquiries')">View All Inquiries →</button>
+              </div>
             </div>
             <div class="table-container">
               <table class="admin-table">
@@ -1302,7 +1336,7 @@
                   All form submissions from the public website (Franchise form, Brochure requests, Contact) are stored here.
                 </p>
               </div>
-              <div style="display: flex; gap: 10px;">
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <select id="enquiry-filter-status" class="form-control" style="width: auto;" onchange="loadEnquiries()">
                   <option value="all">All Statuses</option>
                   <option value="new">New</option>
@@ -1310,6 +1344,10 @@
                   <option value="contacted">Contacted</option>
                   <option value="closed">Closed</option>
                 </select>
+                <button class="btn-excel" onclick="exportEnquiriesToExcel()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  <span>Export to Excel (.xlsx)</span>
+                </button>
               </div>
             </div>
 
@@ -2654,6 +2692,109 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    // =========================================
+    // EXPORT ENQUIRIES TO EXCEL (.xlsx / .csv)
+    // =========================================
+    async function exportEnquiriesToExcel() {
+      try {
+        showToast('Preparing Excel sheet...', 'info');
+        // Fetch all enquiries from API
+        const res = await apiFetch('/enquiries');
+        if (!res || !res.ok) {
+          showToast('Failed to fetch enquiries for export', 'error');
+          return;
+        }
+        const data = await res.json();
+        if (!data || data.length === 0) {
+          showToast('No enquiries available to export', 'warning');
+          return;
+        }
+
+        const typeLabels = {
+          franchise: 'Franchise Application',
+          call: 'Discovery Call',
+          brochure: 'Brochure Request',
+          contact: 'General Enquiry'
+        };
+
+        const rows = data.map((e, index) => {
+          const dateIST = e.submitted_at 
+            ? new Date(e.submitted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) 
+            : '—';
+          return {
+            'S.No': index + 1,
+            'Enquiry ID': `#${e.id}`,
+            'Submission Date (IST)': dateIST,
+            'Enquiry Type': typeLabels[e.type] || e.type || 'Franchise',
+            'Applicant Name': e.name || '—',
+            'Phone Number': e.phone || '—',
+            'Email Address': e.email || '—',
+            'City': e.city || '—',
+            'State': e.state || '—',
+            'Business Background': e.business || '—',
+            'Property Details': e.property || '—',
+            'Message': e.message || '—',
+            'Status': (e.status || 'new').toUpperCase(),
+            'Admin Notes': e.notes || '—'
+          };
+        });
+
+        const today = new Date().toISOString().split('T')[0];
+        const filename = `Cinemark_Enquiries_${today}.xlsx`;
+
+        if (typeof XLSX !== 'undefined') {
+          // 1. Create worksheet from JSON
+          const ws = XLSX.utils.json_to_sheet(rows);
+
+          // 2. Set auto column widths for beautiful display in Excel
+          ws['!cols'] = [
+            { wch: 6 },  // S.No
+            { wch: 12 }, // Enquiry ID
+            { wch: 24 }, // Submission Date (IST)
+            { wch: 22 }, // Enquiry Type
+            { wch: 22 }, // Applicant Name
+            { wch: 16 }, // Phone Number
+            { wch: 28 }, // Email Address
+            { wch: 16 }, // City
+            { wch: 16 }, // State
+            { wch: 32 }, // Business Background
+            { wch: 32 }, // Property Details
+            { wch: 45 }, // Message
+            { wch: 14 }, // Status
+            { wch: 35 }  // Admin Notes
+          ];
+
+          // 3. Create workbook and trigger download
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Enquiries');
+          XLSX.writeFile(wb, filename);
+          showToast('✅ Excel spreadsheet downloaded successfully!');
+        } else {
+          // Fallback: UTF-8 BOM CSV (opens seamlessly in Microsoft Excel)
+          const headers = Object.keys(rows[0]);
+          const csvLines = [
+            headers.join(','),
+            ...rows.map(r => headers.map(h => {
+              const val = r[h] === null || r[h] === undefined ? '' : String(r[h]);
+              return `"${val.replace(/"/g, '""')}"`;
+            }).join(','))
+          ];
+          const csvContent = '\uFEFF' + csvLines.join('\r\n');
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = `Cinemark_Enquiries_${today}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          showToast('✅ CSV spreadsheet downloaded successfully!');
+        }
+      } catch (err) {
+        console.error('Export error:', err);
+        showToast('Error exporting Excel sheet', 'error');
+      }
     }
 
     // Initialize application on load
