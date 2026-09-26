@@ -270,7 +270,20 @@ const loginSchema = Joi.object({
   password: Joi.string().required()
 });
 
-app.post('/api/login', loginLimiter, (req, res) => {
+// Helper to get active admin password from DB or env
+async function getAdminPassword() {
+  try {
+    const res = await pool.query("SELECT value FROM admin_settings WHERE key = 'admin_password'");
+    if (res.rows.length > 0 && res.rows[0].value) {
+      return res.rows[0].value;
+    }
+  } catch (err) {
+    // Fall back to memory / env if table does not exist yet
+  }
+  return ADMIN_PASSWORD;
+}
+
+app.post('/api/login', loginLimiter, async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
@@ -278,8 +291,9 @@ app.post('/api/login', loginLimiter, (req, res) => {
 
   const email = value.email.toLowerCase().trim();
   const password = value.password;
+  const activePassword = await getAdminPassword();
 
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+  if (email === ADMIN_EMAIL && password === activePassword) {
     const token = generateToken({ email: ADMIN_EMAIL, role: 'admin' });
     return res.json({
       success: true,
@@ -298,12 +312,14 @@ app.get('/api/auth/verify', requireAdmin, (req, res) => {
   res.json({ valid: true, admin: req.admin });
 });
 
-app.post('/api/admin/settings/password', requireAdmin, (req, res) => {
+app.post('/api/admin/settings/password', requireAdmin, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword) {
     return res.status(400).json({ error: 'Current password and new password are required.' });
   }
-  if (currentPassword !== ADMIN_PASSWORD) {
+
+  const activePassword = await getAdminPassword();
+  if (currentPassword !== activePassword) {
     return res.status(400).json({ error: 'Current password does not match.' });
   }
   if (newPassword.length < 6) {
@@ -311,7 +327,26 @@ app.post('/api/admin/settings/password', requireAdmin, (req, res) => {
   }
 
   ADMIN_PASSWORD = newPassword;
-  return res.json({ success: true, message: 'Admin password updated successfully for this session.' });
+
+  // Persist permanently in PostgreSQL database
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS admin_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await pool.query(`
+      INSERT INTO admin_settings (key, value, updated_at)
+      VALUES ('admin_password', $1, NOW())
+      ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()
+    `, [newPassword]);
+  } catch (dbErr) {
+    console.error('Error persisting admin password to DB:', dbErr);
+  }
+
+  return res.json({ success: true, message: 'Admin password updated and saved permanently!' });
 });
 
 // ==========================================
